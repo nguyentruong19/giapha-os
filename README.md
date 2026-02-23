@@ -25,17 +25,11 @@ Phù hợp với người Việt Nam.
 
 ## Hình ảnh Giao diện
 
-### Sơ đồ Cây truyền thống
+![Danh sách](docs/screenshots/list.png)
 
 ![Sơ đồ cây](docs/screenshots/tree.png)
 
-### Sơ đồ Tư duy
-
-![Sơ đồ tư duy](docs/screenshots/mindmap.png)
-
-### Danh sách Thành viên chi tiết
-
-![Danh sách thành viên](docs/screenshots/list.png)
+![Mindmap](docs/screenshots/mindmap.png)
 
 ## Cài đặt và Chạy dự án
 
