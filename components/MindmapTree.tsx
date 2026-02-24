@@ -333,7 +333,7 @@ export default function MindmapTree({
   return (
     <div className="w-full h-full relative p-4 sm:p-6 lg:p-8 min-h-[calc(100vh-140px)] flex justify-start lg:justify-center overflow-x-auto">
       {/* Root Container */}
-      <div className="font-sans min-w-max pb-20">
+      <div id="export-container" className="font-sans min-w-max pb-20 p-8">
         {roots.map((root, index) => (
           <MindmapNode
             key={root.id}

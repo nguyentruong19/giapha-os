@@ -1,6 +1,7 @@
 import config from "@/app/config";
 import AvatarToggle from "@/components/AvatarToggle";
 import DashboardMemberList from "@/components/DashboardMemberList";
+import ExportButton from "@/components/ExportButton";
 import FamilyTree from "@/components/FamilyTree";
 import Footer from "@/components/Footer";
 import HeaderMenu from "@/components/HeaderMenu";
@@ -107,31 +108,37 @@ export default async function FamilyTreePage({ searchParams }: PageProps) {
 
       <main className="flex-1 overflow-auto bg-stone-50/50 flex flex-col">
         {currentView !== "list" && persons.length > 0 && finalRootId && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 w-full flex items-center justify-center gap-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2 w-full flex flex-wrap items-center justify-center gap-4 relative z-20">
             <RootSelector persons={persons} currentRootId={finalRootId} />
-            <AvatarToggle />
+            <div className="flex items-center gap-2">
+              <AvatarToggle />
+              <ExportButton />
+            </div>
           </div>
         )}
 
         {currentView === "list" && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full relative z-10">
             <DashboardMemberList initialPersons={persons} />
           </div>
         )}
-        {currentView === "tree" && (
-          <FamilyTree
-            personsMap={personsMap}
-            relationships={relationships}
-            roots={roots}
-          />
-        )}
-        {currentView === "mindmap" && (
-          <MindmapTree
-            personsMap={personsMap}
-            relationships={relationships}
-            roots={roots}
-          />
-        )}
+
+        <div className="flex-1 w-full relative z-10">
+          {currentView === "tree" && (
+            <FamilyTree
+              personsMap={personsMap}
+              relationships={relationships}
+              roots={roots}
+            />
+          )}
+          {currentView === "mindmap" && (
+            <MindmapTree
+              personsMap={personsMap}
+              relationships={relationships}
+              roots={roots}
+            />
+          )}
+        </div>
       </main>
 
       <Footer

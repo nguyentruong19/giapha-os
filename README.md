@@ -38,7 +38,7 @@ Phù hợp với người Việt Nam.
 
 1. Tạo một project mới trên [Supabase](https://supabase.com/).
 2. Truy cập vào mục **SQL Editor** trên Supabase.
-3. Sao chép toàn bộ mã SQL trong file `docs/schema.sql` và dán vào SQL Editor để chạy. Bước này sẽ khởi tạo bảng tính, các quan hệ (relationships), chính sách bảo mật (RLS), và các **Database Functions** dùng cho **Quản lý Người dùng** (như `admin_create_user`, `get_admin_users`, v.v.).
+3. Sao chép toàn bộ mã SQL trong file `docs/schema.sql` và dán vào SQL Editor để chạy.
 4. Khởi tạo một bucket trong Supabase Storage (ví dụ tên là `avatars`) và thiết lập quyền Public để lưu trữ ảnh đại diện. (Lưu ý: Bước này đã được tự động thêm vào script schema thông qua câu lệnh SQL).
 5. **(Tùy chọn)** Để có sẵn dữ liệu mẫu phục vụ kiểm thử nhanh (10 thành viên thuộc 4 thế hệ), hãy sao chép và chạy mã SQL trong file `docs/seed.sql` vào SQL Editor.
 

@@ -253,6 +253,7 @@ export default function FamilyTree({
         p-8 adds padding inside scroll area.
       */}
       <div
+        id="export-container"
         className={`w-max min-w-full mx-auto p-4 css-tree transition-opacity duration-200 ${isDragging ? "opacity-90" : ""}`}
       >
         <ul>
