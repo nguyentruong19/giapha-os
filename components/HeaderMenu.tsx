@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BarChart2,
+  CalendarClock,
   ChevronDown,
   Database,
   Network,
@@ -98,6 +99,14 @@ export default function HeaderMenu({ isAdmin, userEmail }: HeaderMenuProps) {
                   </Link>
                 </>
               )}
+              <Link
+                href="/dashboard/events"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-stone-700 hover:text-amber-700 hover:bg-amber-50 transition-colors"
+              >
+                <CalendarClock className="size-4" />
+                Sự kiện
+              </Link>
               <Link
                 href="/dashboard/stats"
                 onClick={() => setIsOpen(false)}
