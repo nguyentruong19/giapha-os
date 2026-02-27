@@ -30,6 +30,7 @@ export default async function MemberDetailPage({ params }: PageProps) {
     .single();
 
   const isAdmin = profile?.role === "admin";
+  const canEdit = profile?.role === "admin" || profile?.role === "editor";
 
   // Fetch Person Public Data
   const { data: person, error } = await supabase
@@ -69,7 +70,7 @@ export default async function MemberDetailPage({ params }: PageProps) {
           </span>
           Quay lại
         </Link>
-        {isAdmin && (
+        {canEdit && (
           <div className="flex items-center gap-2.5">
             <Link
               href={`/dashboard/members/${id}/edit`}
@@ -88,6 +89,7 @@ export default async function MemberDetailPage({ params }: PageProps) {
             person={person}
             privateData={privateData}
             isAdmin={isAdmin}
+            canEdit={canEdit}
           />
         </div>
       </main>

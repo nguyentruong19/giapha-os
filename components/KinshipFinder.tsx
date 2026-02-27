@@ -231,7 +231,7 @@ function PersonSelector({
 // ── Kinship reference table data ──────────────────────────────────────────────
 const KINSHIP_TERMS = [
   {
-    relation: "Cha / Mẹ",
+    relation: "Bố / Mẹ",
     desc: "1 bậc trên (dòng trực hệ)",
     example: "Bố, ba, má...",
   },
@@ -253,11 +253,11 @@ const KINSHIP_TERMS = [
   {
     relation: "Anh / Chị / Em họ",
     desc: "Cùng thế hệ, khác nhánh",
-    example: "Dựa vào thứ bậc của nhánh cha/mẹ",
+    example: "Dựa vào thứ bậc của nhánh bố/mẹ",
   },
   {
     relation: "Bác / Chú / Cô",
-    desc: "Anh/chị/em của cha (Bên Nội)",
+    desc: "Anh/chị/em của bố (Bên Nội)",
     example: "Bác (anh), Chú (em trai), Cô (chị em gái)",
   },
   {
@@ -490,7 +490,7 @@ export default function KinshipFinder({ persons, relationships }: Props) {
                   <ul className="space-y-1.5 text-sm text-amber-800">
                     <li className="flex gap-2">
                       <span className="text-amber-400 shrink-0">•</span>
-                      Nhập đầy đủ quan hệ <strong>Cha/Mẹ - Con</strong> và{" "}
+                      Nhập đầy đủ quan hệ <strong>Bố/Mẹ - Con</strong> và{" "}
                       <strong>Kết hôn</strong>.
                     </li>
                     <li className="flex gap-2">

@@ -9,6 +9,7 @@ import {
 import config from "@/app/config";
 import { AdminUserData, UserRole } from "@/types";
 import { AnimatePresence, motion } from "framer-motion";
+import { Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface AdminUserListProps {
@@ -284,77 +285,76 @@ export default function AdminUserList({
                     {user.email}
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
-                        user.role === "admin"
-                          ? "bg-amber-100 text-amber-800 border border-amber-200"
-                          : "bg-stone-100 text-stone-600 border border-stone-200"
-                      }`}
-                    >
-                      {user.role}
-                    </span>
+                    {user.id === currentUserId ? (
+                      <span
+                        className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                          user.role === "admin"
+                            ? "bg-amber-100 text-amber-800 border border-amber-200"
+                            : user.role === "editor"
+                              ? "bg-sky-100 text-sky-800 border border-sky-200"
+                              : "bg-stone-100 text-stone-600 border border-stone-200"
+                        }`}
+                      >
+                        {user.role}
+                      </span>
+                    ) : (
+                      <select
+                        value={user.role}
+                        onChange={(e) =>
+                          handleRoleChange(user.id, e.target.value as UserRole)
+                        }
+                        disabled={loadingId === user.id}
+                        className="bg-stone-50 text-stone-700 border border-stone-200 text-xs rounded-md focus:ring-amber-500 focus:border-amber-500 px-2 py-1 hover:border-stone-300 transition-colors disabled:opacity-50 outline-none"
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="editor">Editor</option>
+                        <option value="member">Member</option>
+                      </select>
+                    )}
                   </td>
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                    <button
+                      disabled={
+                        loadingId === user.id || user.id === currentUserId
+                      }
+                      onClick={() =>
+                        handleStatusChange(user.id, !user.is_active)
+                      }
+                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium transition-colors ${
                         user.is_active
                           ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                          : "bg-red-100 text-red-800 border border-red-200"
-                      }`}
+                          : "bg-stone-100 text-stone-800 border border-stone-200"
+                      } ${
+                        user.id !== currentUserId
+                          ? "hover:opacity-80 cursor-pointer"
+                          : "opacity-50 cursor-not-allowed"
+                      } disabled:opacity-50`}
+                      title={
+                        user.id !== currentUserId
+                          ? user.is_active
+                            ? "Nhấn để khoá"
+                            : "Nhấn để duyệt"
+                          : "Không thể thay đổi trạng thái của chính bạn"
+                      }
                     >
                       {user.is_active ? "Đã duyệt" : "Chờ duyệt"}
-                    </span>
+                    </button>
                   </td>
                   <td className="px-6 py-4 text-stone-500">
                     {new Date(user.created_at).toLocaleDateString("vi-VN")}
                   </td>
-                  <td className="px-6 py-4 text-right space-x-3">
+                  <td className="px-6 py-4 text-right">
                     {user.id !== currentUserId && (
-                      <>
-                        {user.is_active ? (
-                          <button
-                            disabled={loadingId === user.id}
-                            onClick={() => handleStatusChange(user.id, false)}
-                            className="text-stone-600 hover:text-stone-900 font-medium disabled:opacity-50"
-                          >
-                            Khoá
-                          </button>
-                        ) : (
-                          <button
-                            disabled={loadingId === user.id}
-                            onClick={() => handleStatusChange(user.id, true)}
-                            className="text-emerald-600 hover:text-emerald-800 font-medium disabled:opacity-50"
-                          >
-                            Duyệt
-                          </button>
-                        )}
-
-                        {user.role === "admin" ? (
-                          <button
-                            disabled={loadingId === user.id}
-                            onClick={() => handleRoleChange(user.id, "member")}
-                            className="text-stone-600 hover:text-stone-900 font-medium disabled:opacity-50"
-                          >
-                            Hạ quyền
-                          </button>
-                        ) : (
-                          <button
-                            disabled={loadingId === user.id}
-                            onClick={() => handleRoleChange(user.id, "admin")}
-                            className="text-amber-600 hover:text-amber-800 font-medium disabled:opacity-50"
-                          >
-                            Lên Admin
-                          </button>
-                        )}
-
+                      <div className="flex justify-end items-center gap-2">
                         <button
+                          title="Xoá người dùng"
                           disabled={loadingId === user.id}
                           onClick={() => handleDelete(user.id)}
-                          className="text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
+                          className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
                         >
-                          Xóa
+                          <Trash className="size-4" />
                         </button>
-                      </>
+                      </div>
                     )}
                     {user.id === currentUserId && (
                       <span className="text-stone-400 italic text-xs">Bạn</span>
@@ -444,6 +444,7 @@ export default function AdminUserList({
                     defaultValue="member"
                   >
                     <option value="member">Thành viên (Member)</option>
+                    <option value="editor">Thư ký (Editor)</option>
                     <option value="admin">Quản trị viên (Admin)</option>
                   </select>
                 </div>

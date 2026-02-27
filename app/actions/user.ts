@@ -42,6 +42,11 @@ export async function adminCreateUser(formData: FormData) {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const role = formData.get("role")?.toString() || "member";
+
+  if (role !== "admin" && role !== "editor" && role !== "member") {
+    throw new Error("Vai trò không hợp lệ.");
+  }
+
   const isActiveStr = formData.get("is_active")?.toString();
   const isActive = isActiveStr === "false" ? false : true;
 

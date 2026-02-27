@@ -111,10 +111,10 @@ export default function AboutPage() {
                 dụng phần mềm, hoặc muốn thảo luận thì xin vui lòng gửi email về
                 địa chỉ:{` `}
                 <a
-                  href="mailto:contact@homielab.com"
+                  href="mailto:giaphaos@homielab.com"
                   className="font-semibold text-amber-700 hover:text-amber-600 transition-colors inline-flex items-center gap-1.5 mt-2"
                 >
-                  contact@homielab.com
+                  giaphaos@homielab.com
                 </a>
               </p>
             </div>

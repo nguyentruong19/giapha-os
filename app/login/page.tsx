@@ -324,6 +324,12 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => {
+                  if (isLogin && isDemo) {
+                    setError(
+                      "Đây là trang demo, bạn không cần phải tạo tài khoản. Hãy sử dụng tài khoản demo để truy cập với toàn bộ quyền.",
+                    );
+                    return;
+                  }
                   setIsLogin(!isLogin);
                   setError(null);
                   setSuccessMessage(null);

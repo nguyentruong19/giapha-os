@@ -62,9 +62,9 @@ export default async function LineagePage() {
                   Thế hệ (Generation)
                 </h3>
                 <p className="text-stone-500 text-xs leading-relaxed">
-                  Dùng thuật toán BFS từ các tổ tiên gốc (người không có cha/mẹ
-                  trong hệ thống). Tổ tiên = Đời 1, con = Đời 2, cháu = Đời 3...
-                  Con dâu/rể kế thừa đời của người bạn đời.
+                  Dùng thuật toán BFS từ các tổ tiên gốc (người chưa có thông
+                  tin bố/mẹ trong hệ thống). Tổ tiên = Đời 1, con = Đời 2, cháu
+                  = Đời 3... Con dâu/rể kế thừa đời của người bạn đời.
                 </p>
               </div>
             </div>
