@@ -12,7 +12,7 @@ export default function DashboardMemberList({
   initialPersons: Person[];
 }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("updated_desc");
+  const [sortOption, setSortOption] = useState("birth_asc");
 
   const [filterOption, setFilterOption] = useState("all");
 
