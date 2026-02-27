@@ -9,8 +9,8 @@ import {
   GitMerge,
   Info,
   Network,
-  Settings,
   UserCircle,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -80,7 +80,7 @@ export default function HeaderMenu({ isAdmin, userEmail }: HeaderMenuProps) {
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-stone-700 hover:text-amber-700 hover:bg-amber-50 transition-colors"
                   >
-                    <Settings className="size-4" />
+                    <Users className="size-4" />
                     Quản lý Người dùng
                   </Link>
                   <Link

@@ -107,7 +107,8 @@ function getDirectDescendantTerm(
   gender: "male" | "female" | "other",
 ): string {
   const base = DESCENDANTS[depth] || `Cháu đời ${depth}`;
-  const suffix = gender === "male" ? " trai" : gender === "female" ? " gái" : "";
+  const suffix =
+    gender === "male" ? " trai" : gender === "female" ? " gái" : "";
   return base + suffix;
 }
 
@@ -524,8 +525,8 @@ export function computeKinship(
   }
 
   return {
-    aCallsB: "Người dưng",
-    bCallsA: "Người dưng",
+    aCallsB: "Chưa xác định",
+    bCallsA: "Chưa xác định",
     description: "Không tìm thấy quan hệ trong phạm vi dữ liệu",
     distance: -1,
     pathLabels: [],

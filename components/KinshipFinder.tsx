@@ -81,7 +81,7 @@ function PersonSelector({
   );
 
   return (
-    <div className="flex-1 min-w-0 relative">
+    <div className="w-full flex-1 min-w-0 relative">
       <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">
         {label}
       </p>
@@ -153,7 +153,7 @@ function PersonSelector({
                 <input
                   autoFocus
                   placeholder="Tìm tên..."
-                  className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-stone-200 focus:outline-none focus:border-amber-400"
+                  className="w-full pl-9 pr-4 py-2 text-base sm:text-sm rounded-xl border border-stone-200 focus:outline-none focus:border-amber-400"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -291,8 +291,8 @@ export default function KinshipFinder({ persons, relationships }: Props) {
   return (
     <div className="space-y-6">
       {/* ── Selector row ── */}
-      <div className="bg-white/80 backdrop-blur-md border border-stone-200/60 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-end gap-3">
+      <div className="bg-white/80 backdrop-blur-md border border-stone-200/60 rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center sm:items-end gap-3 sm:gap-4">
           <PersonSelector
             label="Thành viên A"
             selected={personA}
@@ -303,9 +303,9 @@ export default function KinshipFinder({ persons, relationships }: Props) {
           <button
             onClick={swap}
             title="Đổi chỗ"
-            className="size-10 shrink-0 mb-0.5 flex items-center justify-center rounded-xl bg-stone-100 hover:bg-amber-100 hover:text-amber-600 text-stone-500 transition-all border border-stone-200"
+            className="size-10 shrink-0 sm:mb-0.5 flex items-center justify-center rounded-xl bg-stone-100 hover:bg-amber-100 hover:text-amber-600 text-stone-500 transition-all border border-stone-200"
           >
-            <ArrowLeftRight className="size-4" />
+            <ArrowLeftRight className="size-4 rotate-90 sm:rotate-0" />
           </button>
           <PersonSelector
             label="Thành viên B"
