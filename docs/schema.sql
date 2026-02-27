@@ -22,7 +22,7 @@ END $$;
 
 -- System user roles
 DO $$ BEGIN
-    CREATE TYPE public.user_role_enum AS ENUM ('admin', 'member');
+    CREATE TYPE public.user_role_enum AS ENUM ('admin', 'editor', 'member');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;

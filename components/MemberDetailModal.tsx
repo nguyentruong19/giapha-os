@@ -23,6 +23,7 @@ export default function MemberDetailModal() {
 
   const [authChecked, setAuthChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [canEdit, setCanEdit] = useState(false);
 
   const [person, setPerson] = useState<Person | null>(null);
   const [privateData, setPrivateData] = useState<Record<
@@ -42,6 +43,7 @@ export default function MemberDetailModal() {
       try {
         // 1. Check auth / role
         let currentIsAdmin = isAdmin;
+        let currentCanEdit = canEdit;
         if (!authChecked) {
           const {
             data: { user },
@@ -53,7 +55,10 @@ export default function MemberDetailModal() {
               .eq("id", user.id)
               .single();
             currentIsAdmin = profile?.role === "admin";
+            currentCanEdit =
+              profile?.role === "admin" || profile?.role === "editor";
             setIsAdmin(currentIsAdmin);
+            setCanEdit(currentCanEdit);
           }
           setAuthChecked(true);
         }
@@ -87,7 +92,7 @@ export default function MemberDetailModal() {
         setLoading(false);
       }
     },
-    [isAdmin, authChecked, supabase],
+    [isAdmin, canEdit, authChecked, supabase],
   );
 
   // Sync state with URL parameter
@@ -173,7 +178,7 @@ export default function MemberDetailModal() {
                   <span className="hidden sm:inline">Xem chi tiết</span>
                 </button>
               ) : (
-                isAdmin &&
+                canEdit &&
                 person && (
                   <>
                     <Link
@@ -245,6 +250,7 @@ export default function MemberDetailModal() {
                   person={person}
                   privateData={privateData}
                   isAdmin={isAdmin}
+                  canEdit={canEdit}
                 />
               </div>
             ) : null}

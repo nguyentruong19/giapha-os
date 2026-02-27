@@ -3,7 +3,7 @@ export type RelationshipType =
   | "marriage"
   | "biological_child"
   | "adopted_child";
-export type UserRole = "admin" | "member";
+export type UserRole = "admin" | "editor" | "member";
 
 export interface Profile {
   id: string;

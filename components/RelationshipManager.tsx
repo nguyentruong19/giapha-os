@@ -12,6 +12,7 @@ import DefaultAvatar from "./DefaultAvatar";
 interface RelationshipManagerProps {
   personId: string;
   isAdmin: boolean;
+  canEdit?: boolean;
   personGender: string; // Passed down to calculate default spouse gender
 }
 
@@ -26,6 +27,7 @@ interface EnrichedRelationship {
 export default function RelationshipManager({
   personId,
   isAdmin,
+  canEdit = false,
   personGender,
 }: RelationshipManagerProps) {
   const supabase = createClient();
@@ -516,7 +518,7 @@ export default function RelationshipManager({
                         )}
                       </div>
                     </button>
-                    {isAdmin && rel.direction !== "child_in_law" && (
+                    {canEdit && rel.direction !== "child_in_law" && (
                       <button
                         onClick={() => handleDelete(rel.id)}
                         className="text-stone-300 hover:text-red-500 hover:bg-red-50 p-2 sm:p-2.5 rounded-lg transition-colors flex items-center justify-center ml-2"
@@ -555,8 +557,15 @@ export default function RelationshipManager({
       })}
 
       {/* Add Button (Admin) */}
-      {isAdmin && !isAdding && !isAddingBulk && !isAddingSpouse && (
+      {canEdit && !isAdding && !isAddingBulk && !isAddingSpouse && (
         <div className="flex flex-col sm:flex-row gap-3 mt-4">
+          <button
+            onClick={() => setIsAdding(true)}
+            className="flex-1 py-3 border-2 border-dashed border-stone-200 bg-stone-50/50 hover:bg-stone-50 rounded-xl sm:rounded-2xl text-stone-500 font-medium text-sm hover:border-amber-400 hover:text-amber-700 transition-all duration-200"
+          >
+            + Thêm Quan Hệ
+          </button>
+
           <button
             onClick={() => setIsAddingBulk(true)}
             className="flex-1 py-3 border-2 border-dashed border-stone-200 bg-stone-50/50 hover:bg-stone-50 rounded-xl sm:rounded-2xl text-stone-500 font-medium text-sm hover:border-sky-400 hover:text-sky-700 transition-all duration-200"
@@ -570,18 +579,11 @@ export default function RelationshipManager({
           >
             + Thêm Vợ/Chồng
           </button>
-
-          <button
-            onClick={() => setIsAdding(true)}
-            className="flex-1 py-3 border-2 border-dashed border-stone-200 bg-stone-50/50 hover:bg-stone-50 rounded-xl sm:rounded-2xl text-stone-500 font-medium text-sm hover:border-amber-400 hover:text-amber-700 transition-all duration-200"
-          >
-            + Thêm Mối Quan Hệ
-          </button>
         </div>
       )}
 
       {/* Add Form (Admin) */}
-      {isAdmin && isAdding && (
+      {canEdit && isAdding && (
         <div className="mt-4 bg-stone-50/50 p-4 sm:p-5 rounded-xl border border-stone-200 shadow-sm">
           <h4 className="font-bold text-stone-800 mb-3 text-sm">
             Thêm Quan Hệ Mới
@@ -740,7 +742,7 @@ export default function RelationshipManager({
       )}
 
       {/* Bulk Add Children Form (Admin) */}
-      {isAdmin && isAddingBulk && (
+      {canEdit && isAddingBulk && (
         <div className="mt-4 bg-sky-50/50 p-4 sm:p-5 rounded-xl border border-sky-200 shadow-sm">
           <h4 className="font-bold text-sky-800 mb-3 text-sm">
             Thêm Nhanh Nhiều Con
@@ -889,7 +891,7 @@ export default function RelationshipManager({
       )}
 
       {/* Quick Add Spouse Form (Admin) */}
-      {isAdmin && isAddingSpouse && (
+      {canEdit && isAddingSpouse && (
         <div className="mt-4 bg-rose-50/50 p-4 sm:p-5 rounded-xl border border-rose-200 shadow-sm">
           <h4 className="font-bold text-rose-800 mb-3 text-sm">
             Thêm Nhanh Vợ/Chồng

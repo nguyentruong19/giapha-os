@@ -17,12 +17,14 @@ interface MemberDetailContentProps {
   person: Person;
   privateData: Record<string, unknown> | null;
   isAdmin: boolean;
+  canEdit?: boolean;
 }
 
 export default function MemberDetailContent({
   person,
   privateData,
   isAdmin,
+  canEdit = false,
 }: MemberDetailContentProps) {
   const fullPerson = { ...person, ...privateData };
   const isDeceased =
@@ -293,6 +295,7 @@ export default function MemberDetailContent({
                 <RelationshipManager
                   personId={person.id}
                   isAdmin={isAdmin}
+                  canEdit={canEdit}
                   personGender={person.gender}
                 />
               </div>
