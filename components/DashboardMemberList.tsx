@@ -14,7 +14,7 @@ export default function DashboardMemberList({
   canEdit?: boolean;
 }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("birth_asc");
+  const [sortOption, setSortOption] = useState("updated_desc");
 
   const [filterOption, setFilterOption] = useState("all");
 
@@ -62,6 +62,26 @@ export default function DashboardMemberList({
         return a.full_name.localeCompare(b.full_name, "vi");
       case "name_desc":
         return b.full_name.localeCompare(a.full_name, "vi");
+      case "updated_desc":
+        return (
+          new Date(b.updated_at || 0).getTime() -
+          new Date(a.updated_at || 0).getTime()
+        );
+      case "updated_asc":
+        return (
+          new Date(a.updated_at || 0).getTime() -
+          new Date(b.updated_at || 0).getTime()
+        );
+      case "generation_asc":
+        if (a.generation !== b.generation) {
+          return (a.generation || 999) - (b.generation || 999);
+        }
+        return (a.birth_order || 999) - (b.birth_order || 999);
+      case "generation_desc":
+        if (b.generation !== a.generation) {
+          return (b.generation || 0) - (a.generation || 0);
+        }
+        return (b.birth_order || 0) - (a.birth_order || 0);
       default:
         return 0;
     }
@@ -126,6 +146,10 @@ export default function DashboardMemberList({
                   <option value="birth_desc">Năm sinh (Giảm dần)</option>
                   <option value="name_asc">Tên (A-Z)</option>
                   <option value="name_desc">Tên (Z-A)</option>
+                  <option value="updated_desc">Cập nhật (Mới nhất)</option>
+                  <option value="updated_asc">Cập nhật (Cũ nhất)</option>
+                  <option value="generation_asc">Theo thế hệ (Tăng dần)</option>
+                  <option value="generation_desc">Theo thế hệ (Giảm dần)</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
                   <svg
