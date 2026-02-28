@@ -9,8 +9,17 @@ import {
   getLunarDateString,
 } from "@/utils/dateHelpers";
 import { motion, Variants } from "framer-motion";
-import { Briefcase, Info, Leaf, MapPin, Phone, Users } from "lucide-react";
+import {
+  Briefcase,
+  ChevronDown,
+  Info,
+  Leaf,
+  MapPin,
+  Phone,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 import { FemaleIcon, MaleIcon } from "./GenderIcons";
 
 interface MemberDetailContentProps {
@@ -26,7 +35,11 @@ export default function MemberDetailContent({
   isAdmin,
   canEdit = false,
 }: MemberDetailContentProps) {
+  const [isNoteExpanded, setIsNoteExpanded] = useState(false);
   const fullPerson = { ...person, ...privateData };
+  const note = (fullPerson.note as string) || "";
+  const isNoteLong = note.length > 300;
+
   const isDeceased =
     !!person.death_year || !!person.death_month || !!person.death_day;
 
@@ -275,14 +288,54 @@ export default function MemberDetailContent({
                 <Info className="size-5 text-amber-600" />
                 Ghi chú
               </h2>
-              <div className="bg-white/80 backdrop-blur-sm p-5 sm:p-6 rounded-2xl border border-stone-200/60 shadow-sm">
-                <p className="text-stone-600 whitespace-pre-wrap text-sm sm:text-base leading-relaxed">
-                  {(fullPerson.note as string) || (
-                    <span className="text-stone-400 italic">
-                      Chưa có ghi chú.
-                    </span>
-                  )}
-                </p>
+              <div className="bg-white/80 backdrop-blur-sm p-5 sm:p-6 rounded-2xl border border-stone-200/60 shadow-sm relative overflow-hidden">
+                {note ? (
+                  <div className="flex flex-col">
+                    <motion.div
+                      initial={false}
+                      animate={{
+                        height:
+                          !isNoteExpanded && isNoteLong ? "120px" : "auto",
+                      }}
+                      className="relative overflow-hidden"
+                      transition={{
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 20,
+                        duration: 0.4,
+                      }}
+                    >
+                      <p className="text-stone-600 whitespace-pre-wrap text-sm sm:text-base leading-relaxed">
+                        {note}
+                      </p>
+                      {/* Gradient fade overlay when collapsed */}
+                      {!isNoteExpanded && isNoteLong && (
+                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-linear-to-t from-white/95 via-white/40 to-transparent pointer-events-none" />
+                      )}
+                    </motion.div>
+
+                    {isNoteLong && (
+                      <button
+                        onClick={() => setIsNoteExpanded(!isNoteExpanded)}
+                        className="mt-4 text-amber-600 hover:text-amber-700 text-[13px] font-bold flex items-center gap-1.5 transition-colors w-fit group relative z-10"
+                      >
+                        <span className="underline underline-offset-4 decoration-amber-600/30 group-hover:decoration-amber-700">
+                          {isNoteExpanded ? "Thu gọn" : "Xem thêm"}
+                        </span>
+                        <motion.div
+                          animate={{ rotate: isNoteExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <ChevronDown className="size-3.5" />
+                        </motion.div>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-stone-400 italic text-sm sm:text-base">
+                    Chưa có ghi chú.
+                  </p>
+                )}
               </div>
             </motion.section>
 
