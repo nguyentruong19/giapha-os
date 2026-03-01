@@ -14,6 +14,8 @@ export interface FamilyEvent {
   eventDateLabel: string;
   /** The actual year of original event (birth year or death year) */
   originYear: number | null;
+  /** Whether the person is deceased */
+  isDeceased: boolean;
 }
 
 /**
@@ -95,6 +97,7 @@ export function computeEvents(
         daysUntil,
         eventDateLabel: `${p.birth_day.toString().padStart(2, "0")}/${p.birth_month.toString().padStart(2, "0")}`,
         originYear: p.birth_year,
+        isDeceased: p.is_deceased,
       });
     }
 
@@ -123,6 +126,7 @@ export function computeEvents(
           daysUntil,
           eventDateLabel: `${lDay.toString().padStart(2, "0")}/${lMonth.toString().padStart(2, "0")} ÂL`,
           originYear: p.death_year,
+          isDeceased: p.is_deceased,
         });
       } catch {
         // Skip if lunar conversion fails

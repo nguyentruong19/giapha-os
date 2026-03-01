@@ -2,6 +2,7 @@
 
 import { computeEvents, FamilyEvent } from "@/utils/eventHelpers";
 import { motion } from "framer-motion";
+import { Solar } from "lunar-javascript";
 import { Cake, CalendarDays, Clock, Flower } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useDashboard } from "./DashboardContext";
@@ -109,14 +110,42 @@ export default function EventsList({ persons }: EventsListProps) {
     "all" | "birthday" | "death_anniversary"
   >("all");
   const [showCount, setShowCount] = useState(20);
+  const [showDeceasedBirthdays, setShowDeceasedBirthdays] = useState(false);
+
+  const [todayDate] = useState(() => {
+    const today = new Date();
+    const solarStr = `Ngày ${today.getDate()} tháng ${today.getMonth() + 1} năm ${today.getFullYear()}`;
+    let lunarStr = "";
+    try {
+      const solar = Solar.fromYmd(
+        today.getFullYear(),
+        today.getMonth() + 1,
+        today.getDate()
+      );
+      const lunar = solar.getLunar();
+      const lMonthRaw = lunar.getMonth();
+      const isLeap = lMonthRaw < 0;
+      const lMonth = Math.abs(lMonthRaw).toString().padStart(2, "0");
+      const lDay = lunar.getDay().toString().padStart(2, "0");
+      lunarStr = `${lDay}/${lMonth}${isLeap ? " nhuận" : ""} ÂL`;
+    } catch (e) {
+      console.error(e);
+    }
+    return { solar: solarStr, lunar: lunarStr };
+  });
 
   const allEvents = useMemo(() => computeEvents(persons), [persons]);
 
-  const filtered = useMemo(
-    () =>
-      filter === "all" ? allEvents : allEvents.filter((e) => e.type === filter),
-    [allEvents, filter],
-  );
+  const filtered = useMemo(() => {
+    let result = allEvents;
+    if (filter !== "all") {
+      result = result.filter((e) => e.type === filter);
+    }
+    if (!showDeceasedBirthdays) {
+      result = result.filter((e) => !(e.type === "birthday" && e.isDeceased));
+    }
+    return result;
+  }, [allEvents, filter, showDeceasedBirthdays]);
 
   // Split into upcoming (within 365 days) and far away
   const upcoming = filtered.filter((e) => e.daysUntil <= 365);
@@ -130,47 +159,78 @@ export default function EventsList({ persons }: EventsListProps) {
   return (
     <div className="space-y-5">
       {/* Summary banner */}
-      {(todayCount > 0 || soonCount > 0) && (
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3"
-        >
-          <span className="text-2xl">🎊</span>
-          <p className="text-sm font-medium text-amber-800">
-            {todayCount > 0 && (
-              <span className="font-bold">{todayCount} sự kiện hôm nay</span>
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col gap-2"
+      >
+        <div className="flex items-center gap-3">
+          <CalendarDays className="size-5 text-amber-600 shrink-0" />
+          <p className="text-sm font-semibold text-amber-900 leading-tight">
+            Hôm nay: {todayDate.solar}
+            {todayDate.lunar && (
+              <span className="font-normal text-amber-700 ml-1">
+                ({todayDate.lunar})
+              </span>
             )}
-            {todayCount > 0 && soonCount > 0 && " · "}
-            {soonCount > 0 && <span>{soonCount} sự kiện trong 7 ngày tới</span>}
           </p>
-        </motion.div>
-      )}
+        </div>
+        {(todayCount > 0 || soonCount > 0) && (
+          <div className="flex items-center gap-3 mt-1">
+            <span className="text-xl shrink-0 leading-none">🎊</span>
+            <p className="text-sm font-medium text-amber-800 leading-tight">
+              {todayCount > 0 && (
+                <span className="font-bold">{todayCount} sự kiện hôm nay</span>
+              )}
+              {todayCount > 0 && soonCount > 0 && " · "}
+              {soonCount > 0 && (
+                <span>{soonCount} sự kiện trong 7 ngày tới</span>
+              )}
+            </p>
+          </div>
+        )}
+      </motion.div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-2">
-        {(
-          [
-            { key: "all", label: "Tất cả" },
-            { key: "birthday", label: "Sinh nhật" },
-            { key: "death_anniversary", label: "Ngày giỗ" },
-          ] as const
-        ).map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setFilter(tab.key)}
-            className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-              filter === tab.key
-                ? "bg-amber-500 text-white shadow-sm"
-                : "bg-white/80 text-stone-600 border border-stone-200/60 hover:border-amber-200 hover:text-amber-700"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-        <span className="ml-auto text-xs text-stone-400 self-center">
-          {filtered.length} sự kiện trong năm
-        </span>
+      {/* Controls */}
+      <div className="flex flex-col gap-3">
+        {/* Filter tabs */}
+        <div className="flex flex-wrap items-center gap-2">
+          {(
+            [
+              { key: "all", label: "Tất cả" },
+              { key: "birthday", label: "Sinh nhật" },
+              { key: "death_anniversary", label: "Ngày giỗ" },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setFilter(tab.key)}
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                filter === tab.key
+                  ? "bg-amber-500 text-white shadow-sm"
+                  : "bg-white/80 text-stone-600 border border-stone-200/60 hover:border-amber-200 hover:text-amber-700"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+          <span className="ml-auto text-xs text-stone-400 self-center">
+            {filtered.length} sự kiện trong năm
+          </span>
+        </div>
+
+        {/* Toggle options */}
+        <div className="flex px-1">
+          <label className="flex items-center gap-2.5 text-sm font-medium text-stone-600 cursor-pointer hover:text-stone-900 transition-colors select-none">
+            <input
+              type="checkbox"
+              checked={showDeceasedBirthdays}
+              onChange={(e) => setShowDeceasedBirthdays(e.target.checked)}
+              className="rounded-md border-stone-300 text-amber-500 focus:ring-amber-500 size-4 transition-all"
+            />
+            Hiển thị sinh nhật của người đã mất
+          </label>
+        </div>
       </div>
 
       {/* Event list */}
