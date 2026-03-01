@@ -13,7 +13,9 @@ export interface FamilyEvent {
   /** Display label for the date of the event (e.g., "12/03" solar or "05/02 ÂL") */
   eventDateLabel: string;
   /** The actual year of original event (birth year or death year) */
-  originYear: number | null;
+  originYear?: number | null;
+  originMonth?: number | null;
+  originDay?: number | null;
   /** Whether the person is deceased */
   isDeceased: boolean;
   /** Optional location for the event */
@@ -110,7 +112,9 @@ export function computeEvents(
         nextOccurrence: next,
         daysUntil,
         eventDateLabel: `${p.birth_day.toString().padStart(2, "0")}/${p.birth_month.toString().padStart(2, "0")}`,
-        originYear: p.birth_year,
+        originYear: p.birth_year || null,
+        originMonth: p.birth_month,
+        originDay: p.birth_day,
         isDeceased: p.is_deceased,
       });
     }

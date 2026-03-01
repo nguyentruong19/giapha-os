@@ -1,6 +1,7 @@
 "use client";
 
 import { computeEvents, FamilyEvent, CustomEventRecord } from "@/utils/eventHelpers";
+import { getZodiacSign } from "@/utils/dateHelpers";
 import { motion } from "framer-motion";
 import { Solar } from "lunar-javascript";
 import { Cake, CalendarDays, Clock, Flower, Star, MapPin, AlignLeft, Plus } from "lucide-react";
@@ -91,9 +92,16 @@ function EventCard({ event, index, onEditCustomEvent }: { event: FamilyEvent; in
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className={`font-semibold text-stone-800 truncate transition-colors group-hover:text-amber-700`}>
-          {event.personName}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className={`font-semibold text-stone-800 truncate transition-colors group-hover:text-amber-700`}>
+            {event.personName}
+          </p>
+          {isBirthday && event.originDay && event.originMonth && getZodiacSign(event.originDay, event.originMonth) && (
+            <span className="shrink-0 text-[10px] font-sans font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60 rounded-md px-1.5 py-0.5 whitespace-nowrap shadow-xs tracking-wider">
+              {getZodiacSign(event.originDay, event.originMonth)}
+            </span>
+          )}
+        </div>
         <div className="flex flex-col gap-1 mt-1">
           <p className="text-sm text-stone-500 flex items-center gap-1.5 leading-tight">
             <CalendarDays className="size-3.5 shrink-0" />
