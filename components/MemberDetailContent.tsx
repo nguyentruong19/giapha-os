@@ -164,6 +164,14 @@ export default function MemberDetailContent({
                 </span>
               )}
             </h1>
+            {person.other_names && (
+              <p className="mt-1.5 text-sm sm:text-base text-stone-600 font-medium italic">
+                Tên khác:{" "}
+                <span className="font-semibold not-italic text-stone-700">
+                  {person.other_names}
+                </span>
+              </p>
+            )}
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
               {/* Birth Card */}

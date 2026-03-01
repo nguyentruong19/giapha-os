@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS public.persons (
   is_in_law BOOLEAN NOT NULL DEFAULT FALSE,
   birth_order INT,
   generation INT,
+  other_names TEXT,
   avatar_url TEXT,
   note TEXT,
   
