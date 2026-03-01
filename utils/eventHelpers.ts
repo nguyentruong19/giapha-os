@@ -1,9 +1,9 @@
 import { Lunar, Solar } from "lunar-javascript";
 
-export type EventType = "birthday" | "death_anniversary";
+export type EventType = "birthday" | "death_anniversary" | "custom_event";
 
 export interface FamilyEvent {
-  personId: string;
+  personId: string | null;
   personName: string;
   type: EventType;
   /** Solar date of the next occurrence */
@@ -16,6 +16,19 @@ export interface FamilyEvent {
   originYear: number | null;
   /** Whether the person is deceased */
   isDeceased: boolean;
+  /** Optional location for the event */
+  location?: string | null;
+  /** Optional content/description for the event */
+  content?: string | null;
+}
+
+export interface CustomEventRecord {
+  id: string;
+  name: string;
+  content: string | null;
+  event_date: string;
+  location: string | null;
+  created_by: string | null;
 }
 
 /**
@@ -72,6 +85,7 @@ export function computeEvents(
     death_day: number | null;
     is_deceased: boolean;
   }[],
+  customEvents: CustomEventRecord[] = []
 ): FamilyEvent[] {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -132,6 +146,31 @@ export function computeEvents(
         // Skip if lunar conversion fails
       }
     }
+  }
+
+  // ── Custom Events (solar) ───────────────────────────────────────
+  for (const ce of customEvents) {
+    if (!ce.event_date) continue;
+    const [y, m, d] = ce.event_date.split("-").map(Number);
+    if (!y || !m || !d) continue;
+
+    const next = new Date(y, m - 1, d);
+    const daysUntil = Math.round(
+      (next.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    events.push({
+      personId: ce.id, // using event id here
+      personName: ce.name, // mapping custom event name to personName
+      type: "custom_event",
+      nextOccurrence: next,
+      daysUntil,
+      eventDateLabel: `${d.toString().padStart(2, "0")}/${m.toString().padStart(2, "0")}/${y}`,
+      originYear: y,
+      isDeceased: false,
+      location: ce.location,
+      content: ce.content,
+    });
   }
 
   // Sort: soonest first
