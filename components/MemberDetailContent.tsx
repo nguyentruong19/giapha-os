@@ -8,6 +8,7 @@ import {
   formatDisplayDate,
   getLunarDateString,
   getZodiacSign,
+  getZodiacAnimal,
 } from "@/utils/dateHelpers";
 import { motion, Variants } from "framer-motion";
 import {
@@ -187,11 +188,18 @@ export default function MemberDetailContent({
                       Sinh
                     </h3>
                   </div>
-                  {person.birth_day && person.birth_month && getZodiacSign(person.birth_day, person.birth_month) && (
-                    <span className="text-[10px] font-sans font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60 rounded-md px-2 py-0.5 whitespace-nowrap shadow-xs tracking-wider">
-                      {getZodiacSign(person.birth_day, person.birth_month)}
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1">
+                    {person.birth_year && getZodiacAnimal(person.birth_year, person.birth_month, person.birth_day) && (
+                      <span className="text-[10px] font-sans font-bold text-rose-700 bg-rose-50 border border-rose-200/60 rounded-md px-1.5 py-0.5 whitespace-nowrap shadow-xs tracking-wider">
+                        Tuổi {getZodiacAnimal(person.birth_year, person.birth_month, person.birth_day)}
+                      </span>
+                    )}
+                    {person.birth_day && person.birth_month && getZodiacSign(person.birth_day, person.birth_month) && (
+                      <span className="text-[10px] font-sans font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60 rounded-md px-1.5 py-0.5 whitespace-nowrap shadow-xs tracking-wider">
+                        {getZodiacSign(person.birth_day, person.birth_month)}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="space-y-1.5 pl-4 border-l-2 border-stone-100">
                   <p className="text-stone-800 font-semibold text-sm sm:text-base">

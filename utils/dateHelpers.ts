@@ -76,3 +76,23 @@ export function getZodiacSign(day: number | null, month: number | null): string 
 
   return null;
 }
+
+export function getZodiacAnimal(year: number | null, month: number | null = null, day: number | null = null): string | null {
+  if (!year) return null;
+  const animals = [
+    "Thân", "Dậu", "Tuất", "Hợi", "Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi"
+  ];
+  
+  let targetYear = year;
+  
+  if (month && day) {
+    try {
+      const solar = Solar.fromYmd(year, parseInt(month.toString()), parseInt(day.toString()));
+      targetYear = solar.getLunar().getYear();
+    } catch (error) {
+      console.error("Lunar conversion error in zodiac:", error);
+    }
+  }
+  
+  return animals[targetYear % 12];
+}
