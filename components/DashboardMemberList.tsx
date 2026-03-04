@@ -15,7 +15,7 @@ export default function DashboardMemberList({
 }) {
   const { setShowCreateMember } = useDashboard();
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("updated_desc");
+  const [sortOption, setSortOption] = useState("birth_asc");
 
   const [filterOption, setFilterOption] = useState("all");
 
