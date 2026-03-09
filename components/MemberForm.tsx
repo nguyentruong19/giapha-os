@@ -556,7 +556,7 @@ export default function MemberForm({
                   </div>
                 </div>
                 <span className="text-sm font-semibold text-stone-700 group-hover:text-stone-900 transition-colors">
-                  Đã qua đời
+                  Đã mất
                 </span>
               </label>
             </div>
