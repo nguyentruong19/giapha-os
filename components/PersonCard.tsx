@@ -25,7 +25,7 @@ export default function PersonCard({ person }: PersonCardProps) {
     <button
       onClick={() => setMemberModalId(person.id)}
       className={`group block relative bg-white/60 p-2 sm:p-4 rounded-2xl shadow-sm border border-stone-200/60 hover:border-amber-300 hover:shadow-md hover:bg-white/90 transition-all duration-300 overflow-hidden
-        ${isDeceased ? "opacity-80 grayscale-[0.3]" : ""}`}
+        ${isDeceased ? "opacity-80 grayscalePer-[0.3]" : ""}`}
     >
       {/* Decorative gradient blob */}
       {/* <div
@@ -43,8 +43,8 @@ export default function PersonCard({ person }: PersonCardProps) {
                 unoptimized
                 src={person.avatar_url}
                 alt={person.full_name}
-                width={64}
-                height={64}
+                width={32}
+                height={32}
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -82,9 +82,9 @@ export default function PersonCard({ person }: PersonCardProps) {
               />
             </svg>
             <span className="truncate">
-              {person.birth_year || "Chưa rõ"}
+              {person.birth_year || "..."}
               {isDeceased &&
-                ` → ${person.death_lunar_year || person.death_year || "Chưa rõ"}`}
+                ` → ${person.death_lunar_year || person.death_year || "..."}`}
             </span>
           </p>
           {(isDeceased ||
@@ -92,11 +92,6 @@ export default function PersonCard({ person }: PersonCardProps) {
             person.birth_order != null ||
             person.generation != null) && (
             <div className="flex flex-wrap items-center gap-1.5 shrink-0 mt-2">
-              {isDeceased && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold bg-stone-100 text-stone-500 uppercase tracking-widest border border-stone-200/60 shadow-xs">
-                  Đã mất
-                </span>
-              )}
               {person.is_in_law && (
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold uppercase tracking-widest shadow-xs border ${
@@ -124,6 +119,11 @@ export default function PersonCard({ person }: PersonCardProps) {
               {person.generation != null && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 uppercase tracking-widest shadow-xs">
                   Đời thứ {person.generation}
+                </span>
+              )}
+              {isDeceased && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold bg-stone-100 text-stone-500 uppercase tracking-widest border border-stone-200/60 shadow-xs">
+                  Đã mất
                 </span>
               )}
             </div>
