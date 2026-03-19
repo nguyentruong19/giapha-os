@@ -364,7 +364,7 @@ export function parseGedcom(gedcom: string): {
       }
     }
 
-    if (husb && wife) {
+    if (husb && wife && husb !== wife) {
       relationships.push({
         type: "marriage",
         person_a: husb,
@@ -376,6 +376,7 @@ export function parseGedcom(gedcom: string): {
     const parentA = husb || wife;
     if (parentA) {
       for (const childId of children) {
+        if (parentA === childId) continue;
         relationships.push({
           type: "biological_child",
           person_a: parentA,

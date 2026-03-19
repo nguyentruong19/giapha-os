@@ -326,7 +326,10 @@ export async function importData(
   }
 
   // 6. Insert relationships (stripped of id/created_at to avoid conflicts)
-  const relationships = importPayload.relationships.map(sanitizeRelationship);
+  // Filter out self-relationships to avoid "no_self_relationship" constraint violation
+  const relationships = importPayload.relationships
+    .filter((r) => r.person_a !== r.person_b)
+    .map(sanitizeRelationship);
 
   for (let i = 0; i < relationships.length; i += CHUNK) {
     const chunk = relationships.slice(i, i + CHUNK);
