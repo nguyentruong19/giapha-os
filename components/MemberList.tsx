@@ -17,7 +17,8 @@ export default function MemberList({
 }) {
   const { setShowCreateMember } = useMemberListView();
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("generation_asc");
+  // const [sortOption, setSortOption] = useState("generation_asc");
+  const [sortOption, setSortOption] = useState("birth_asc");
 
   const [filterOption, setFilterOption] = useState("all");
 
