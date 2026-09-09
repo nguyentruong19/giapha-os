@@ -2,12 +2,14 @@
 
 import { exportData, importData } from '@/app/actions/data'
 import { Person } from '@/types'
+import { useI18n } from '@/lib/i18n/I18nProvider'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, CheckCircle2, Download, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import PersonSelector from './PersonSelector'
 
 export default function DataImportExport() {
+  const { t } = useI18n()
   const [isExporting, setIsExporting] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -105,7 +107,7 @@ export default function DataImportExport() {
       URL.revokeObjectURL(url)
     } catch (error: unknown) {
       setExportError(
-        error instanceof Error ? error.message : 'Tải xuống thất bại.'
+        error instanceof Error ? error.message : t('downloadFailed')
       )
       setTimeout(() => setExportError(null), 5000)
     } finally {
@@ -116,12 +118,18 @@ export default function DataImportExport() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (file.size > 25 * 1024 * 1024) {
+        setImportStatus({
+          type: 'error',
+          message: t('fileTooLarge')
+        })
+        return
+      }
       const fileName = file.name.toLowerCase()
       if (fileName.endsWith('.csv')) {
         setImportStatus({
           type: 'error',
-          message:
-            'Vui lòng phục hồi bằng file .zip được tạo ra từ chức năng Xuất CSV.'
+          message: t('csvRestoreZipOnly')
         })
         return
       }
@@ -133,7 +141,7 @@ export default function DataImportExport() {
       ) {
         setImportStatus({
           type: 'error',
-          message: 'Vui lòng chọn file .json, .ged, hoặc .zip hợp lệ.'
+          message: t('invalidRestoreFile')
         })
         return
       }
@@ -164,9 +172,7 @@ export default function DataImportExport() {
       }
 
       if (!payload.persons || !payload.relationships) {
-        throw new Error(
-          'File không chứa cấu trúc dữ liệu hợp lệ (thiếu persons hoặc relationships).'
-        )
+        throw new Error(t('invalidBackupFile'))
       }
 
       const result = await importData({
@@ -187,22 +193,12 @@ export default function DataImportExport() {
         return
       }
 
-      const parts = [
-        `${result.imported?.persons} thành viên`,
-        `${result.imported?.relationships} quan hệ`
-      ]
-      if (result.imported?.person_details_private) {
-        parts.push(
-          `${result.imported.person_details_private} thông tin riêng tư`
-        )
-      }
-      if (result.imported?.custom_events) {
-        parts.push(`${result.imported.custom_events} sự kiện`)
-      }
-
       setImportStatus({
         type: 'success',
-        message: `Phục hồi thành công! Đã nhập ${parts.join(', ')}.`
+        message: t('restoreSuccess', {
+          persons: result.imported?.persons || 0,
+          relationships: result.imported?.relationships || 0
+        })
       })
       setShowConfirm(false)
       setSelectedFile(null)
@@ -210,10 +206,7 @@ export default function DataImportExport() {
     } catch (error: unknown) {
       setImportStatus({
         type: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : 'Quá trình phục hồi đã xảy ra lỗi.'
+        message: error instanceof Error ? error.message : t('restoreFailed')
       })
       setShowConfirm(false)
       setSelectedFile(null)
@@ -227,7 +220,7 @@ export default function DataImportExport() {
     <div className='space-y-6'>
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
         {/* Export Card */}
-        <div className='group relative rounded-2xl border border-stone-200/60 bg-white/80 p-6 shadow-sm transition-shadow hover:shadow-md'>
+        <div className='group relative rounded-2xl border border-stone-200/60 bg-white/80 p-6 transition-shadow'>
           {/* Background Decor */}
           <div className='pointer-events-none absolute inset-0 overflow-hidden rounded-2xl'>
             <div className='absolute top-0 right-0 -mt-16 -mr-16 h-32 w-32 rounded-full bg-amber-200/20 blur-2xl transition-colors group-hover:bg-amber-300/30' />
@@ -238,13 +231,11 @@ export default function DataImportExport() {
               <Download className='size-6' />
             </div>
             <div>
-              <h3 className='text-lg font-bold text-stone-800'>
-                Sao lưu dữ liệu
+              <h3 className='text-lg font-semibold text-stone-800'>
+                {t('backupData')}
               </h3>
               <p className='mt-1 text-sm text-stone-500'>
-                Tải xuống định dạng file JSON, GEDCOM hoặc CSV (Zip). Chọn một
-                điểm gốc bên dưới để chỉ sao lưu nhánh gia đình đó, hoặc chọn
-                &quot;Toàn bộ&quot; để xuất toàn bộ cây.
+                {t('backupDataDescription')}
               </p>
             </div>
           </div>
@@ -254,10 +245,10 @@ export default function DataImportExport() {
               persons={persons}
               selectedId={exportRootId}
               onSelect={setExportRootId}
-              label='Điểm gốc (Root) để xuất dữ liệu'
+              label={t('exportRoot')}
               className='w-full sm:w-80'
               showAllOption={true}
-              allOptionLabel='Toàn bộ dữ liệu'
+              allOptionLabel={t('allData')}
             />
           </div>
 
@@ -266,19 +257,19 @@ export default function DataImportExport() {
               onClick={() => handleExport('json')}
               disabled={isExporting}
               className='btn-primary w-full'>
-              {isExporting ? 'Đang xử lý...' : 'Xuất JSON'}
+              {isExporting ? t('processingData') : t('exportJson')}
             </button>
             <button
               onClick={() => handleExport('gedcom')}
               disabled={isExporting}
               className='btn w-full bg-stone-100 font-medium text-stone-700 hover:bg-stone-200'>
-              {isExporting ? 'Đang xử lý...' : 'Xuất GEDCOM'}
+              {isExporting ? t('processingData') : t('exportGedcom')}
             </button>
             <button
               onClick={() => handleExport('csv')}
               disabled={isExporting}
               className='btn w-full bg-stone-100 font-medium text-stone-700 hover:bg-stone-200 sm:col-span-2 lg:col-span-1'>
-              {isExporting ? 'Đang xử lý...' : 'Xuất CSV (Zip)'}
+              {isExporting ? t('processingData') : t('exportCsv')}
             </button>
           </div>
 
@@ -299,7 +290,7 @@ export default function DataImportExport() {
         </div>
 
         {/* Import Card */}
-        <div className='group relative rounded-2xl border border-stone-200/60 bg-white/80 p-6 shadow-sm transition-shadow hover:shadow-md'>
+        <div className='group relative rounded-2xl border border-stone-200/60 bg-white/80 p-6 transition-shadow'>
           {/* Background Decor */}
           <div className='pointer-events-none absolute inset-0 overflow-hidden rounded-2xl'>
             <div className='absolute top-0 right-0 -mt-16 -mr-16 h-32 w-32 rounded-full bg-rose-200/20 blur-2xl transition-colors group-hover:bg-rose-300/30' />
@@ -310,14 +301,13 @@ export default function DataImportExport() {
               <Upload className='size-6' />
             </div>
             <div>
-              <h3 className='text-lg font-bold text-stone-800'>
-                Phục hồi dữ liệu
+              <h3 className='text-lg font-semibold text-stone-800'>
+                {t('restoreData')}
               </h3>
               <p className='mt-1 text-sm text-stone-500'>
-                Khôi phục cây gia phả từ file đã sao lưu (.json, .ged, hoặc
-                .zip).
-                <span className='ml-1 font-semibold text-rose-600'>
-                  Cảnh báo: Tác vụ này sẽ xoá toàn bộ dữ liệu hiện tại!
+                {t('restoreDataDescription')}
+                <span className='ml-1 font-medium text-rose-600'>
+                  {t('restoreWarning')}
                 </span>
               </p>
             </div>
@@ -334,7 +324,7 @@ export default function DataImportExport() {
             onClick={() => fileInputRef.current?.click()}
             disabled={isImporting}
             className='btn w-full'>
-            {isImporting ? 'Đang xử lý...' : 'Chọn file phục hồi'}
+            {isImporting ? t('processingData') : t('chooseRestoreFile')}
           </button>
         </div>
       </div>
@@ -354,29 +344,22 @@ export default function DataImportExport() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className='relative z-10 w-full max-w-md rounded-2xl border border-stone-200/60 bg-white p-6 shadow-xl'>
+              className='relative z-10 w-full max-w-md rounded-2xl border border-stone-200/60 bg-white p-6'>
               <div className='mb-5 flex items-start gap-4'>
                 <div className='mt-1 shrink-0 rounded-full bg-rose-100/50 p-3 text-rose-600'>
                   <AlertTriangle className='size-6' />
                 </div>
                 <div>
-                  <h3 className='text-lg font-bold text-stone-800'>
-                    Xác nhận phục hồi
+                  <h3 className='text-lg font-semibold text-stone-800'>
+                    {t('restoreConfirmTitle')}
                   </h3>
                   <p className='mt-2 text-sm leading-relaxed text-stone-600'>
-                    Hệ thống sẽ xoá{' '}
-                    <b>
-                      toàn bộ dữ liệu thành viên, mối quan hệ, thông tin riêng
-                      tư và sự kiện hiện tại
-                    </b>{' '}
-                    để thay thế bằng dữ liệu từ file{' '}
-                    <span className='rounded bg-stone-100 px-1 font-mono text-xs'>
-                      {selectedFile?.name}
-                    </span>
-                    .
+                    {t('restoreConfirmText', {
+                      file: selectedFile?.name || ''
+                    })}
                   </p>
-                  <p className='mt-2 text-sm font-semibold text-rose-600'>
-                    Hành động này không thể hoàn tác. Bạn đã chắc chắn?
+                  <p className='mt-2 text-sm font-medium text-rose-600'>
+                    {t('restoreIrreversible')}
                   </p>
                 </div>
               </div>
@@ -386,13 +369,13 @@ export default function DataImportExport() {
                   onClick={() => setShowConfirm(false)}
                   disabled={isImporting}
                   className='rounded-xl bg-stone-100 px-4 py-2 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 hover:text-stone-900'>
-                  Huỷ bỏ
+                  {t('restoreCancel')}
                 </button>
                 <button
                   onClick={handleConfirmImport}
                   disabled={isImporting}
-                  className='rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-rose-700 disabled:opacity-50'>
-                  {isImporting ? 'Đang phục hồi...' : 'Vẫn tiếp tục'}
+                  className='rounded-xl bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-rose-700 disabled:opacity-50'>
+                  {isImporting ? t('restoring') : t('restoreContinue')}
                 </button>
               </div>
             </motion.div>

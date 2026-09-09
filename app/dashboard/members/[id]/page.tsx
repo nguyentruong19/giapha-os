@@ -1,5 +1,6 @@
 import DeleteMemberButton from '@/components/DeleteMemberButton'
 import MemberDetailContent from '@/context/MemberDetailContent'
+import { getServerTranslations } from '@/lib/i18n/server'
 import { getProfile, getSupabase } from '@/utils/supabase/queries'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -10,12 +11,15 @@ interface PageProps {
 }
 
 export default async function MemberDetailPage({ params }: PageProps) {
+  const { t } = await getServerTranslations()
   const { id } = await params
 
   const profile = await getProfile()
 
-  const isAdmin = profile?.role === 'admin'
-  const canEdit = profile?.role === 'admin' || profile?.role === 'editor'
+  const isAdmin = profile?.role === 'admin' && profile.is_active
+  const canEdit =
+    profile?.is_active === true &&
+    (profile.role === 'admin' || profile.role === 'editor')
 
   const supabase = await getSupabase()
 
@@ -52,17 +56,17 @@ export default async function MemberDetailPage({ params }: PageProps) {
           <Link
             href='/dashboard/members'
             className='-ml-2 rounded-full p-2 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600'
-            title='Quay lại danh sách'>
+            title={t('backToMembers')}>
             <ArrowLeft className='size-5' />
           </Link>
-          <h1 className='title'>Chi Tiết Thành Viên</h1>
+          <h1 className='title'>{t('memberDetails')}</h1>
         </div>
         {canEdit && (
           <div className='flex w-full items-center gap-2.5 sm:w-auto'>
             <Link
               href={`/dashboard/members/${id}/edit`}
               className='btn w-full flex-1 sm:w-auto sm:flex-none'>
-              Chỉnh sửa
+              {t('editMember')}
             </Link>
             <DeleteMemberButton memberId={id} className='flex-1 sm:flex-none' />
           </div>
@@ -70,7 +74,7 @@ export default async function MemberDetailPage({ params }: PageProps) {
       </div>
 
       <main className='relative z-10 mx-auto w-full max-w-5xl flex-1 px-4 py-4 sm:px-6 sm:py-6 lg:px-8'>
-        <div className='overflow-hidden rounded-2xl border border-stone-200/60 bg-white/60 shadow-sm transition-shadow duration-300 hover:shadow-md'>
+        <div className='overflow-hidden rounded-2xl border border-stone-200/60 bg-white/60 transition-shadow duration-300'>
           <MemberDetailContent
             person={person}
             privateData={privateData}

@@ -1,5 +1,6 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/I18nProvider'
 import MemberForm from '@/components/MemberForm'
 import { useUser } from '@/components/UserProvider'
 import MemberDetailContent from '@/context/MemberDetailContent'
@@ -12,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 
 export default function MemberDetailModal() {
+  const { t } = useI18n()
   const {
     memberModalId: memberId,
     setMemberModalId,
@@ -51,7 +53,7 @@ export default function MemberDetailModal() {
           .single()
 
         if (personError || !personData) {
-          throw new Error('Không thể tải thông tin thành viên.')
+          throw new Error(t('memberLoadError'))
         }
         setPerson(personData)
 
@@ -69,12 +71,12 @@ export default function MemberDetailModal() {
       } catch (err) {
         console.error('Error fetching member details:', err)
         // @ts-expect-error - err is caught as unknown, but we check for message
-        setError(err?.message || 'Đã xảy ra lỗi hệ thống.')
+        setError(err?.message || t('systemError'))
       } finally {
         setLoading(false)
       }
     },
-    [isAdmin, supabase]
+    [isAdmin, supabase, t]
   )
 
   // Sync state with URL parameter or create mode
@@ -172,7 +174,7 @@ export default function MemberDetailModal() {
             exit={{ scale: 0.96, opacity: 0, y: 15 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
             layoutDependency={false}
-            className='relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white/95 shadow-2xl backdrop-blur-2xl'>
+            className='relative flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-3xl border border-stone-200 bg-white/95 backdrop-blur-2xl'>
             {/* Sticky Header Actions */}
             <div className='absolute top-4 right-4 z-20 flex items-center gap-2 sm:top-5 sm:right-5'>
               {isEditing ? (
@@ -181,9 +183,11 @@ export default function MemberDetailModal() {
                   onClick={() => {
                     setIsEditing(false)
                   }}
-                  className='inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border border-stone-200/50 bg-stone-100/80 px-3 py-2.5 text-sm font-medium text-stone-700 transition-all duration-300 hover:-translate-y-1 hover:bg-stone-200 hover:shadow-soft-hover'>
+                  className='inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border border-stone-200/50 bg-stone-100/80 px-3 py-2.5 text-sm font-medium text-stone-700 transition-all duration-300 hover:-translate-y-1 hover:bg-stone-200'>
                   <ArrowLeft className='size-4' />
-                  <span className='hidden sm:inline'>Quay lại</span>
+                  <span className='hidden sm:inline'>
+                    {t('backToPrevious')}
+                  </span>
                 </button>
               ) : (
                 canEdit &&
@@ -193,21 +197,23 @@ export default function MemberDetailModal() {
                       href={`/dashboard/members/${person.id}`}
                       className='btn-amber text-sm'>
                       <ExternalLink className='size-4' />
-                      <span className='hidden sm:inline'>Xem</span>
+                      <span className='hidden sm:inline'>{t('view')}</span>
                     </Link>
                     <button
                       onClick={() => setIsEditing(true)}
                       className='btn-amber text-sm'>
                       <Edit2 className='size-4' />
-                      <span className='hidden sm:inline'>Chỉnh sửa</span>
+                      <span className='hidden sm:inline'>
+                        {t('editMember')}
+                      </span>
                     </button>
                   </>
                 )
               )}
               <button
                 onClick={closeModal}
-                className='flex size-10 items-center justify-center rounded-full border border-stone-200/50 bg-stone-100/80 text-stone-600 shadow-sm transition-colors hover:bg-stone-200 hover:text-stone-900'
-                aria-label='Đóng'>
+                className='flex size-10 items-center justify-center rounded-full border border-stone-200/50 bg-stone-100/80 text-stone-600 transition-colors hover:bg-stone-200 hover:text-stone-900'
+                aria-label={t('close')}>
                 <X className='size-5' />
               </button>
             </div>
@@ -222,7 +228,9 @@ export default function MemberDetailModal() {
                   transition={{ duration: 0.2 }}
                   className='flex min-h-125 flex-1 flex-col items-center justify-center gap-4'>
                   <div className='size-10 animate-spin rounded-full border-4 border-amber-600 border-t-transparent'></div>
-                  <p className='font-medium text-stone-500'>Đang tải...</p>
+                  <p className='font-medium text-stone-500'>
+                    {t('loadingMember')}
+                  </p>
                 </motion.div>
               ) : error ? (
                 <motion.div
@@ -235,11 +243,11 @@ export default function MemberDetailModal() {
                   <div className='mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500 shadow-inner'>
                     <AlertCircle className='size-8' />
                   </div>
-                  <p className='text-lg font-medium text-red-600'>{error}</p>
+                  <p className='text-sm font-medium text-red-600'>{error}</p>
                   <button
                     onClick={closeModal}
                     className='btn mt-2 rounded-full'>
-                    Đóng
+                    {t('close')}
                   </button>
                 </motion.div>
               ) : isEditing && formInitialData ? (
@@ -251,8 +259,8 @@ export default function MemberDetailModal() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.2 }}
                   className='custom-scrollbar flex-1 overflow-y-auto px-4 pt-16 pb-8 sm:px-8'>
-                  <h2 className='mb-6 font-serif text-xl font-bold text-stone-800'>
-                    Chỉnh sửa thành viên
+                  <h2 className='mb-6 font-serif text-xl font-semibold text-stone-800'>
+                    {t('editMember')}
                   </h2>
                   <MemberForm
                     initialData={
@@ -275,8 +283,8 @@ export default function MemberDetailModal() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.2 }}
                   className='custom-scrollbar flex-1 overflow-y-auto px-4 pt-16 pb-8 sm:px-8'>
-                  <h2 className='mb-6 font-serif text-xl font-bold text-stone-800'>
-                    Thêm thành viên mới
+                  <h2 className='mb-6 font-serif text-xl font-semibold text-stone-800'>
+                    {t('newMember')}
                   </h2>
                   <MemberForm
                     isAdmin={isAdmin}

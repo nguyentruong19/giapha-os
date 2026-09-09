@@ -1,6 +1,8 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Person } from '@/types'
+import { getAvatarUrl } from '@/utils/avatar'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, ChevronDown, Database, Search } from 'lucide-react'
 import Image from 'next/image'
@@ -25,11 +27,11 @@ export default function PersonSelector({
   persons,
   selectedId,
   onSelect,
-  placeholder = 'Chọn người...',
-  label = 'Gốc hiển thị',
+  placeholder,
+  label,
   className = 'w-full sm:w-72',
   showAllOption = false,
-  allOptionLabel = 'Toàn bộ dữ liệu'
+  allOptionLabel
 }: {
   persons: Person[]
   selectedId?: string | null
@@ -40,6 +42,10 @@ export default function PersonSelector({
   showAllOption?: boolean
   allOptionLabel?: string
 }) {
+  const { t } = useI18n()
+  const resolvedPlaceholder = placeholder ?? t('choosePerson')
+  const resolvedLabel = label ?? t('displayRoot')
+  const resolvedAllOptionLabel = allOptionLabel ?? t('allData')
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -77,10 +83,10 @@ export default function PersonSelector({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`group flex w-full items-center gap-3 rounded-xl border bg-white/60 px-3 py-2 text-sm shadow-sm transition-all duration-300 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${isOpen ? 'border-amber-300 bg-white shadow-md ring-2 ring-amber-500/10' : 'border-stone-200/60 hover:border-amber-300 hover:bg-white/90 hover:shadow-md'}`}>
+        className={`group flex w-full items-center gap-3 rounded-xl border bg-white/60 px-3 py-2 text-sm transition-all duration-300 focus:ring-2 focus:ring-amber-500/20 focus:outline-none ${isOpen ? 'border-amber-300 bg-white ring-2 ring-amber-500/10' : 'border-stone-200/60 hover:border-amber-300 hover:bg-white/90'}`}>
         <div className='relative shrink-0'>
           <div
-            className={`flex size-8 items-center justify-center overflow-hidden rounded-full text-xs font-bold shadow-xs ring-2 ring-white ${
+            className={`flex size-8 items-center justify-center overflow-hidden rounded-full text-sm font-medium shadow-xs ring-2 ring-white ${
               currentPerson
                 ? `${getAvatarBg(currentPerson.gender)} text-white`
                 : showAllOption && selectedId === null
@@ -88,10 +94,10 @@ export default function PersonSelector({
                   : 'bg-stone-100 text-stone-400'
             }`}>
             {currentPerson ? (
-              currentPerson.avatar_url ? (
+              getAvatarUrl(currentPerson.avatar_url) ? (
                 <Image
                   unoptimized
-                  src={currentPerson.avatar_url}
+                  src={getAvatarUrl(currentPerson.avatar_url)!}
                   alt={currentPerson.full_name}
                   width={32}
                   height={32}
@@ -120,16 +126,16 @@ export default function PersonSelector({
 
         <div className='min-w-0 flex-1 text-left'>
           {label && (
-            <p className='mb-0.5 text-[10px] leading-none font-bold tracking-widest text-stone-400 uppercase'>
-              {label}
+            <p className='mb-0.5 text-sm leading-none font-medium text-stone-400'>
+              {resolvedLabel}
             </p>
           )}
-          <p className='truncate leading-tight font-semibold text-stone-800 select-none'>
+          <p className='truncate leading-tight font-medium text-stone-800 select-none'>
             {currentPerson
               ? `${currentPerson.full_name} ${currentPerson.birth_year ? `(${currentPerson.birth_year})` : ''}`
               : showAllOption && !selectedId
-                ? allOptionLabel
-                : placeholder}
+                ? resolvedAllOptionLabel
+                : resolvedPlaceholder}
           </p>
         </div>
 
@@ -149,14 +155,14 @@ export default function PersonSelector({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className='absolute z-50 mt-2 flex max-h-80 w-full flex-col overflow-hidden rounded-xl border border-stone-200/80 bg-white/95 shadow-xl ring-1 ring-black/5 backdrop-blur-xl'>
+            className='absolute z-50 mt-2 flex max-h-80 w-full flex-col overflow-hidden rounded-xl border border-stone-200/80 bg-white/95 ring-1 ring-black/5 backdrop-blur-xl'>
             <div className='sticky top-0 z-10 border-b border-stone-100/80 bg-stone-50/50 p-2 backdrop-blur-sm'>
               <div className='relative'>
                 <Search className='absolute top-1/2 left-3 size-4 -translate-y-1/2 text-stone-400' />
                 <input
                   type='text'
-                  className='w-full rounded-lg border border-stone-200/80 bg-white py-2 pr-3 pl-9 text-sm text-stone-900 placeholder-stone-400 shadow-sm transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20'
-                  placeholder='Tìm thành viên...'
+                  className='w-full rounded-lg border border-stone-200/80 bg-white py-2 pr-3 pl-9 text-sm text-stone-900 placeholder-stone-400 transition-all outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20'
+                  placeholder={t('searchMembers')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   autoFocus
@@ -169,7 +175,7 @@ export default function PersonSelector({
                   onClick={() => handleSelect(null)}
                   className={`group/item mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200 ${
                     selectedId === null
-                      ? 'border border-amber-200/50 bg-amber-50 text-amber-900 shadow-sm'
+                      ? 'border border-amber-200/50 bg-amber-50 text-amber-900'
                       : 'border border-transparent text-stone-700 hover:bg-stone-100/80'
                   }`}>
                   <div className='relative shrink-0'>
@@ -179,8 +185,8 @@ export default function PersonSelector({
                   </div>
                   <div className='min-w-0 flex-1 text-left'>
                     <p
-                      className={`truncate ${selectedId === null ? 'font-bold' : 'font-medium group-hover/item:text-stone-900'}`}>
-                      {allOptionLabel}
+                      className={`truncate ${selectedId === null ? 'font-medium' : 'font-medium group-hover/item:text-stone-900'}`}>
+                      {resolvedAllOptionLabel}
                     </p>
                   </div>
                   {selectedId === null && (
@@ -199,16 +205,16 @@ export default function PersonSelector({
                         onClick={() => handleSelect(person.id)}
                         className={`group/item flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200 ${
                           isSelected
-                            ? 'border border-amber-200/50 bg-amber-50 text-amber-900 shadow-sm'
+                            ? 'border border-amber-200/50 bg-amber-50 text-amber-900'
                             : 'border border-transparent text-stone-700 hover:bg-stone-100/80'
                         }`}>
                         <div className='relative shrink-0'>
                           <div
-                            className={`flex size-8 items-center justify-center overflow-hidden rounded-full text-[10px] font-bold text-white shadow-xs ring-1 ring-white ${getAvatarBg(person.gender)}`}>
-                            {person.avatar_url ? (
+                            className={`flex size-8 items-center justify-center overflow-hidden rounded-full text-sm font-medium text-white shadow-xs ring-1 ring-white ${getAvatarBg(person.gender)}`}>
+                            {getAvatarUrl(person.avatar_url) ? (
                               <Image
                                 unoptimized
-                                src={person.avatar_url}
+                                src={getAvatarUrl(person.avatar_url)!}
                                 alt={person.full_name}
                                 width={32}
                                 height={32}
@@ -230,7 +236,7 @@ export default function PersonSelector({
 
                         <div className='min-w-0 flex-1 text-left'>
                           <p
-                            className={`truncate ${isSelected ? 'font-bold' : 'font-medium group-hover/item:text-stone-900'}`}>
+                            className={`truncate ${isSelected ? 'font-medium' : 'font-medium group-hover/item:text-stone-900'}`}>
                             {person.full_name}{' '}
                             {person.birth_year ? (
                               <span className='font-normal text-stone-400'>
@@ -239,8 +245,10 @@ export default function PersonSelector({
                             ) : null}
                           </p>
                           {person.generation != null && (
-                            <p className='text-[10px] font-medium text-stone-400'>
-                              Đời thứ {person.generation}
+                            <p className='text-sm font-medium text-stone-400'>
+                              {t('generationLabel', {
+                                generation: person.generation
+                              })}
                             </p>
                           )}
                         </div>
@@ -258,10 +266,10 @@ export default function PersonSelector({
                     <Search className='size-5 text-stone-300' />
                   </div>
                   <div className='text-sm font-medium text-stone-600'>
-                    Không tìm thấy kết quả
+                    {t('noSearchResults')}
                   </div>
-                  <div className='text-xs text-stone-400'>
-                    Thử tìm với tên khác
+                  <div className='text-sm text-stone-400'>
+                    {t('tryOtherName')}
                   </div>
                 </div>
               )}
