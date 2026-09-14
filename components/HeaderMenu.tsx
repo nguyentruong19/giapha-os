@@ -1,6 +1,5 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUpCircle,
@@ -15,6 +14,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+
 import LogoutButton from './LogoutButton'
 import { useUser } from './UserProvider'
 

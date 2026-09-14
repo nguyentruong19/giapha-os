@@ -1,7 +1,8 @@
-import { createClient } from '@/utils/supabase/server'
-import { notifyAdminOfPendingUser } from '@/utils/approval-notification'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+
+import { notifyAdminOfPendingUser } from '@/utils/approval-notification'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)

@@ -1,10 +1,8 @@
-import { MemberListProvider } from '@/context/MemberListContext'
 import MembersViews from '@/components/MembersViews'
 import MemberDetailModal from '@/components/modal/MemberDetailModal'
-import ViewToggle from '@/components/ViewToggle'
+import ViewToggle, { ViewMode } from '@/components/ViewToggle'
+import { MemberListProvider } from '@/context/MemberListContext'
 import { getProfile, getSupabase } from '@/utils/supabase/queries'
-
-import { ViewMode } from '@/components/ViewToggle'
 
 interface PageProps {
   searchParams: Promise<{ view?: string; rootId?: string; avatar?: string }>

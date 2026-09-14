@@ -1,11 +1,12 @@
 'use client'
 
-import Footer from '@/components/Footer'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Info, Mail, ShieldAlert } from 'lucide-react'
+import Link from 'next/link'
+
+import Footer from '@/components/Footer'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { useI18n } from '@/lib/i18n/I18nProvider'
-import Link from 'next/link'
 
 export default function AboutPage() {
   const { t } = useI18n()

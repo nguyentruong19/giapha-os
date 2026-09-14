@@ -1,7 +1,8 @@
-import { getAvatarStoragePath } from '@/utils/avatar'
-import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+
+import { getAvatarStoragePath } from '@/utils/avatar'
+import { createClient } from '@/utils/supabase/server'
 
 export const runtime = 'nodejs'
 

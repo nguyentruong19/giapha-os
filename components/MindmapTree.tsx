@@ -1,14 +1,15 @@
 'use client'
 
-import { Person, Relationship } from '@/types'
 import { Share2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+
 import { useMemberListView } from '@/context/MemberListContext'
 import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person, Relationship } from '@/types'
+import { buildAdjacencyLists } from '@/utils/treeHelpers'
+
 import { MindmapContextData, MindmapNode } from './MindmapNode'
 import MindmapToolbar from './MindmapToolbar'
-
-import { buildAdjacencyLists } from '@/utils/treeHelpers'
 
 const DEFAULT_AUTO_COLLAPSE_LEVEL = 2
 

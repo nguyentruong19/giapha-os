@@ -1,7 +1,9 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Crosshair, ZoomIn, ZoomOut } from 'lucide-react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+
 import BaseToolbar, { type BaseToolbarProps } from './BaseToolbar'
 
 interface TreeToolbarProps extends BaseToolbarProps {

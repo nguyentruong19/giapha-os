@@ -1,5 +1,9 @@
 'use client'
 
+import { AnimatePresence, motion } from 'framer-motion'
+import { Trash } from 'lucide-react'
+import { useState } from 'react'
+
 import {
   adminCreateUser,
   changeUserRole,
@@ -9,9 +13,6 @@ import {
 import config from '@/app/config'
 import { useI18n } from '@/lib/i18n/I18nProvider'
 import { AdminUserData, UserRole } from '@/types'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Trash } from 'lucide-react'
-import { useState } from 'react'
 
 interface AdminUserListProps {
   initialUsers: AdminUserData[]

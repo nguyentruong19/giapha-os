@@ -1,10 +1,12 @@
 'use client'
 
+import Image from 'next/image'
+
+import { useMemberListView } from '@/context/MemberListContext'
 import { Person } from '@/types'
 import { getAvatarUrl } from '@/utils/avatar'
 import { getAvatarBg } from '@/utils/styleHelprs'
-import Image from 'next/image'
-import { useMemberListView } from '@/context/MemberListContext'
+
 import DefaultAvatar from './DefaultAvatar'
 
 interface FamilyNodeCardProps {

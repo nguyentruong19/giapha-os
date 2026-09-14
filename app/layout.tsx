@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
+
 import { I18nProvider } from '@/lib/i18n/I18nProvider'
 import { getServerLocale } from '@/lib/i18n/server'
+
 import config from './config'
+
 import './globals.css'
 
 const inter = Inter({

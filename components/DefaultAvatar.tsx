@@ -1,5 +1,6 @@
-import { getAvatarBg } from '@/utils/styleHelprs'
 import Image from 'next/image'
+
+import { getAvatarBg } from '@/utils/styleHelprs'
 
 export const AVATAR_VERSION = 'v2'
 

@@ -1,11 +1,12 @@
 'use client'
 
-import Footer from '@/components/Footer'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Database, Settings, Terminal } from 'lucide-react'
 import Link from 'next/link'
+
+import Footer from '@/components/Footer'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 export default function MissingDBConfigPage() {
   const { t } = useI18n()

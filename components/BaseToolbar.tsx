@@ -4,8 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Filter } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+
 import { useMemberListView } from '@/context/MemberListContext'
 import { useI18n } from '@/lib/i18n/I18nProvider'
+
 import ExportButton from './ExportButton'
 
 export interface BaseToolbarProps {

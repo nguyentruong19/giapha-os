@@ -1,9 +1,10 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { motion } from 'framer-motion'
 import { Circle, List, ListTree, Network } from 'lucide-react'
+
 import { useMemberListView } from '@/context/MemberListContext'
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 export type ViewMode = 'list' | 'tree' | 'mindmap' | 'bubble'
 

@@ -1,7 +1,8 @@
-import DataImportExport from '@/components/DataImportExport'
-import { getProfile } from '@/utils/supabase/queries'
-import { getServerTranslations } from '@/lib/i18n/server'
 import { redirect } from 'next/navigation'
+
+import DataImportExport from '@/components/DataImportExport'
+import { getServerTranslations } from '@/lib/i18n/server'
+import { getProfile } from '@/utils/supabase/queries'
 
 export default async function DataManagementPage() {
   const { t } = await getServerTranslations()

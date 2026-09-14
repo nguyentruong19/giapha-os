@@ -1,8 +1,9 @@
-import UpgradeManager from '@/components/UpgradeManager'
+import { redirect } from 'next/navigation'
+
 import { getMigrationStatus } from '@/app/actions/migrations'
+import UpgradeManager from '@/components/UpgradeManager'
 import { getServerTranslations } from '@/lib/i18n/server'
 import { getProfile } from '@/utils/supabase/queries'
-import { redirect } from 'next/navigation'
 
 export default async function UpgradePage() {
   const { t } = await getServerTranslations()

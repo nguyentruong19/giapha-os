@@ -1,6 +1,7 @@
 import Footer from '@/components/Footer'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
 import LandingHero from '@/components/LandingHero'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+
 import config from './config'
 
 export default function HomePage() {

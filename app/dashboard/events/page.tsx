@@ -1,8 +1,8 @@
-import { MemberListProvider } from '@/context/MemberListContext'
 import EventsList from '@/components/EventsList'
 import MemberDetailModal from '@/components/modal/MemberDetailModal'
-import { getSupabase } from '@/utils/supabase/queries'
+import { MemberListProvider } from '@/context/MemberListContext'
 import { getServerTranslations } from '@/lib/i18n/server'
+import { getSupabase } from '@/utils/supabase/queries'
 
 export async function generateMetadata() {
   const { t } = await getServerTranslations()

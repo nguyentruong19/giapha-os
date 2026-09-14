@@ -1,7 +1,8 @@
+import { redirect } from 'next/navigation'
+
 import LineageManager from '@/components/LineageManager'
 import { getServerTranslations } from '@/lib/i18n/server'
 import { getProfile, getSupabase } from '@/utils/supabase/queries'
-import { redirect } from 'next/navigation'
 
 export default async function LineagePage() {
   const { t } = await getServerTranslations()

@@ -1,7 +1,5 @@
 'use client'
 
-import { Gender, Person } from '@/types'
-import { createClient } from '@/utils/supabase/client'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import {
   AlertCircle,
@@ -18,9 +16,12 @@ import {
 import { Lunar, Solar } from 'lunar-javascript'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+
 import { updateDescendantGenerationsAction } from '@/app/actions/member'
 import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Gender, Person } from '@/types'
 import { getAvatarStoragePath, getAvatarUrl } from '@/utils/avatar'
+import { createClient } from '@/utils/supabase/client'
 
 interface MemberFormProps {
   initialData?: Person

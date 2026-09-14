@@ -1,10 +1,5 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import type { TranslationKey } from '@/lib/i18n/messages'
-import { computeKinship } from '@/utils/kinshipHelpers'
-import { getAvatarUrl } from '@/utils/avatar'
-import { getAvatarBg } from '@/utils/styleHelprs'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowLeftRight,
@@ -18,6 +13,13 @@ import {
 import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import type { TranslationKey } from '@/lib/i18n/messages'
+import { getAvatarUrl } from '@/utils/avatar'
+import { computeKinship } from '@/utils/kinshipHelpers'
+import { getAvatarBg } from '@/utils/styleHelprs'
+
 import DefaultAvatar from './DefaultAvatar'
 import { FemaleIcon, MaleIcon } from './GenderIcons'
 

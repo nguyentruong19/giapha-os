@@ -1,9 +1,10 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { motion, Variants } from 'framer-motion'
 import { ArrowRight, Network, ShieldCheck, Sparkles, Users } from 'lucide-react'
 import Link from 'next/link'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 const fadeIn: Variants = {
   hidden: { opacity: 0, y: 20 },

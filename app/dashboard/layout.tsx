@@ -1,14 +1,15 @@
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import React from 'react'
+
 import config from '@/app/config'
 import DashboardHeader from '@/components/DashboardHeader'
 import Footer from '@/components/Footer'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import LogoutButton from '@/components/LogoutButton'
 import { UserProvider } from '@/components/UserProvider'
-import { getProfile, getUser } from '@/utils/supabase/queries'
-import Link from 'next/link'
 import { getServerTranslations } from '@/lib/i18n/server'
-import { redirect } from 'next/navigation'
-import React from 'react'
+import { getProfile, getUser } from '@/utils/supabase/queries'
 
 export default async function DashboardLayout({
   children

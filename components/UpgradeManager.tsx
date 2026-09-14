@@ -1,11 +1,5 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import {
-  getMigrationStatus,
-  runPendingMigrations,
-  type MigrationStatus
-} from '@/app/actions/migrations'
 import {
   AlertTriangle,
   ArrowUpCircle,
@@ -15,6 +9,13 @@ import {
   ServerCog
 } from 'lucide-react'
 import { useMemo, useState } from 'react'
+
+import {
+  getMigrationStatus,
+  runPendingMigrations,
+  type MigrationStatus
+} from '@/app/actions/migrations'
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 export default function UpgradeManager({
   initialStatus

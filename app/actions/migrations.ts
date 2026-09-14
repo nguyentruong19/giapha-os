@@ -1,11 +1,13 @@
 'use server'
 
-import { getServerTranslations } from '@/lib/i18n/server'
-import { getIsAdmin } from '@/utils/supabase/queries'
-import packageJson from '@/package.json'
-import postgres from 'postgres'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+
+import postgres from 'postgres'
+
+import { getServerTranslations } from '@/lib/i18n/server'
+import packageJson from '@/package.json'
+import { getIsAdmin } from '@/utils/supabase/queries'
 
 const SOURCE_REPOSITORY = 'homielab/giapha-os'
 const SOURCE_BRANCH = 'main'

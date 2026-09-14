@@ -1,10 +1,11 @@
 'use client'
 
-import { createClient } from '@/utils/supabase/client'
 import { LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+
 import { useI18n } from '@/lib/i18n/I18nProvider'
+import { createClient } from '@/utils/supabase/client'
 
 export default function LogoutButton() {
   const router = useRouter()

@@ -1,16 +1,17 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import MemberForm from '@/components/MemberForm'
-import { useUser } from '@/components/UserProvider'
-import MemberDetailContent from '@/context/MemberDetailContent'
-import { useMemberListView } from '@/context/MemberListContext'
-import { Person } from '@/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertCircle, ArrowLeft, Edit2, ExternalLink, X } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+
+import MemberForm from '@/components/MemberForm'
+import { useUser } from '@/components/UserProvider'
+import MemberDetailContent from '@/context/MemberDetailContent'
+import { useMemberListView } from '@/context/MemberListContext'
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person } from '@/types'
 
 export default function MemberDetailModal() {
   const { t } = useI18n()

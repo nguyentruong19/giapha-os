@@ -1,5 +1,9 @@
 'use client'
 
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useCallback, useContext, useEffect, useState } from 'react'
+
 import {
   MemberListContext,
   useMemberListView
@@ -10,9 +14,7 @@ import { getAvatarUrl } from '@/utils/avatar'
 import { formatDisplayDate } from '@/utils/dateHelpers'
 import { getAvatarBg } from '@/utils/styleHelprs'
 import { createClient } from '@/utils/supabase/client'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useCallback, useContext, useEffect, useState } from 'react'
+
 import DefaultAvatar from './DefaultAvatar'
 
 interface RelationshipManagerProps {

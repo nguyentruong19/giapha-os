@@ -1,3 +1,5 @@
+import { NextResponse } from 'next/server'
+
 import {
   getLocale,
   getMessages,
@@ -7,7 +9,6 @@ import {
 } from '@/lib/i18n/messages'
 import { hashApprovalToken } from '@/utils/approval'
 import { getAdminSupabase } from '@/utils/supabase/admin'
-import { NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
 

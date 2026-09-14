@@ -1,8 +1,9 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Check, ClipboardCopy } from 'lucide-react'
 import { useState } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 export default function CopyButton({ content }: { content: string }) {
   const [copied, setCopied] = useState(false)

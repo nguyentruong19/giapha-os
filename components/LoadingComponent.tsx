@@ -1,7 +1,8 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Loader2 } from 'lucide-react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 export default function LoadingComponent() {
   const { t } = useI18n()

@@ -1,10 +1,11 @@
 'use client'
 
-import { deleteMemberProfile } from '@/app/actions/member'
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { AlertCircle, X } from 'lucide-react'
 import { isRedirectError } from 'next/dist/client/components/redirect-error'
 import { useState } from 'react'
+
+import { deleteMemberProfile } from '@/app/actions/member'
+import { useI18n } from '@/lib/i18n/I18nProvider'
 
 interface DeleteMemberButtonProps {
   memberId: string

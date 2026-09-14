@@ -1,8 +1,5 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import { Person, Relationship } from '@/types'
-import { createClient } from '@/utils/supabase/client'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   AlertCircle,
@@ -14,6 +11,10 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useState } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person, Relationship } from '@/types'
+import { createClient } from '@/utils/supabase/client'
 
 interface LineageManagerProps {
   persons: Person[]

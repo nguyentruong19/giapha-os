@@ -1,14 +1,14 @@
 'use client'
 
-import { GalleryItem } from '@/types'
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import dayjs from 'dayjs'
-import { CalendarDays, Maximize2, X, Clock } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { CalendarDays, Clock, Maximize2, X } from 'lucide-react'
+import Image from 'next/image'
+import { useMemo, useState } from 'react'
 
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { GalleryItem } from '@/types'
 import { createClient } from '@/utils/supabase/client'
 import { getGalleryStoragePath } from '@/utils/supabase/storage-path'
-import Image from 'next/image'
 
 interface GalleryGridProps {
   items: GalleryItem[]

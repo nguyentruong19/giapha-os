@@ -1,7 +1,9 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { ChevronsDownUp, ChevronsUpDown } from 'lucide-react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+
 import BaseToolbar, { type BaseToolbarProps } from './BaseToolbar'
 
 interface MindmapToolbarProps extends BaseToolbarProps {

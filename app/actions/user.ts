@@ -1,9 +1,10 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
+
 import { getServerTranslations } from '@/lib/i18n/server'
 import { UserRole } from '@/types'
 import { getSupabase } from '@/utils/supabase/queries'
-import { revalidatePath } from 'next/cache'
 
 export async function changeUserRole(userId: string, newRole: UserRole) {
   const supabase = await getSupabase()

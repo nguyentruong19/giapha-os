@@ -1,11 +1,12 @@
 'use client'
 
-import PersonCard from '@/components/PersonCard'
-import { Person, Relationship } from '@/types'
 import { ArrowUpDown, Filter, Plus, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
+
+import PersonCard from '@/components/PersonCard'
 import { useMemberListView } from '@/context/MemberListContext'
 import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person, Relationship } from '@/types'
 
 export default function MemberList({
   initialPersons,

@@ -1,8 +1,5 @@
 'use client'
 
-import { Person, Relationship } from '@/types'
-import { getZodiacAnimal, getZodiacSign } from '@/utils/dateHelpers'
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { motion } from 'framer-motion'
 import {
   Crown,
@@ -17,6 +14,10 @@ import {
   Venus
 } from 'lucide-react'
 import { useMemo } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person, Relationship } from '@/types'
+import { getZodiacAnimal, getZodiacSign } from '@/utils/dateHelpers'
 
 interface FamilyStatsProps {
   persons: Person[]

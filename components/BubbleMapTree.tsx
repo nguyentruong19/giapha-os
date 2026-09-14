@@ -1,12 +1,14 @@
 'use client'
 
+import * as d3 from 'd3'
+import { Maximize2, Minimize2, Minus, Plus, RotateCcw } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+
 import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Person, Relationship } from '@/types'
 import { getAvatarUrl } from '@/utils/avatar'
 import { buildAdjacencyLists, getFilteredTreeData } from '@/utils/treeHelpers'
-import * as d3 from 'd3'
-import { Maximize2, Minimize2, Minus, Plus, RotateCcw } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+
 import { AVATAR_VERSION } from './DefaultAvatar'
 
 export interface BubbleMapTreeProps {

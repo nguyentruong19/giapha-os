@@ -1,8 +1,9 @@
+import { redirect } from 'next/navigation'
+
 import AdminUserList from '@/components/AdminUserList'
 import { getServerTranslations } from '@/lib/i18n/server'
 import { AdminUserData } from '@/types'
 import { getProfile, getSupabase } from '@/utils/supabase/queries'
-import { redirect } from 'next/navigation'
 
 export default async function AdminUsersPage() {
   const { t } = await getServerTranslations()

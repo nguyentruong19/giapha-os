@@ -1,10 +1,11 @@
 'use server'
 
-import { getServerTranslations } from '@/lib/i18n/server'
+import { revalidatePath } from 'next/cache'
+
 import type { TranslationKey, TranslationValues } from '@/lib/i18n/messages'
+import { getServerTranslations } from '@/lib/i18n/server'
 import { Relationship } from '@/types'
 import { getIsAdmin, getSupabase } from '@/utils/supabase/queries'
-import { revalidatePath } from 'next/cache'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

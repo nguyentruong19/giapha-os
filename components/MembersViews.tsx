@@ -1,13 +1,14 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import { useMemberListView } from '@/context/MemberListContext'
-import MemberList from '@/components/MemberList'
-import RootSelector from '@/components/RootSelector'
-import { Person, Relationship } from '@/types'
-import { useEffect, useMemo, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
+import { useEffect, useMemo, useRef } from 'react'
+
+import MemberList from '@/components/MemberList'
+import RootSelector from '@/components/RootSelector'
+import { useMemberListView } from '@/context/MemberListContext'
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person, Relationship } from '@/types'
 
 const FamilyTree = dynamic(() => import('@/components/FamilyTree'))
 const MindmapTree = dynamic(() => import('@/components/MindmapTree'))

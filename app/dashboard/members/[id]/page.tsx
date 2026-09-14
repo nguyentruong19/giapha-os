@@ -1,10 +1,11 @@
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
 import DeleteMemberButton from '@/components/DeleteMemberButton'
 import MemberDetailContent from '@/context/MemberDetailContent'
 import { getServerTranslations } from '@/lib/i18n/server'
 import { getProfile, getSupabase } from '@/utils/supabase/queries'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
 
 interface PageProps {
   params: Promise<{ id: string }>

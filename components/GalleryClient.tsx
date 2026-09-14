@@ -1,10 +1,12 @@
 'use client'
 
-import { GalleryItem } from '@/types'
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Clock, LayoutGrid, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { GalleryItem } from '@/types'
+
 import GalleryGrid from './GalleryGrid'
 import UploadModal from './modal/UploadModal'
 

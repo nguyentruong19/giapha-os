@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { toJpeg, toPng } from 'html-to-image'
+import { toPng } from 'html-to-image'
 import jsPDF from 'jspdf'
 import {
   AlertCircle,
@@ -12,6 +12,7 @@ import {
   X
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+
 import { useI18n } from '@/lib/i18n/I18nProvider'
 
 export default function ExportButton() {
@@ -20,6 +21,7 @@ export default function ExportButton() {
   const [error, setError] = useState<string | null>(null)
   const { t } = useI18n()
   const menuRef = useRef<HTMLDivElement>(null)
+  const errorTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -30,6 +32,117 @@ export default function ExportButton() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  useEffect(
+    () => () => {
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current)
+    },
+    []
+  )
+
+  const getExportSize = (element: HTMLElement) => {
+    const width = Math.ceil(
+      Math.max(element.scrollWidth, element.offsetWidth, element.clientWidth)
+    )
+    const height = Math.ceil(
+      Math.max(element.scrollHeight, element.offsetHeight, element.clientHeight)
+    )
+    return { height, width }
+  }
+
+  // Browsers cap canvas dimensions (Safari iOS ~4096-8192px, desktop ~16384px).
+  // Scale pixelRatio down for large trees so html-to-image doesn't throw.
+  const getSafePixelRatio = (width: number, height: number) => {
+    const MAX_CANVAS_DIMENSION = 8192
+    const longestSide = Math.max(width, height, 1)
+    return Math.max(1, Math.min(2, MAX_CANVAS_DIMENSION / longestSide))
+  }
+
+  const downloadDataUrl = (url: string, filename: string) => {
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
+
+  const loadImage = (src: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => resolve(img)
+      img.onerror = reject
+      img.src = src
+    })
+
+  const handleExportPng = async (element: HTMLElement) => {
+    const { height, width } = getExportSize(element)
+    const url = await toPng(element, {
+      backgroundColor: '#f5f5f4',
+      cacheBust: true,
+      height,
+      pixelRatio: getSafePixelRatio(width, height),
+      style: {
+        height: `${height}px`,
+        transform: 'none',
+        transformOrigin: 'top left',
+        width: `${width}px`
+      },
+      width
+    })
+    downloadDataUrl(
+      url,
+      `giapha-sodo-${new Date().toISOString().split('T')[0]}.png`
+    )
+  }
+
+  const handleExportPdf = async (element: HTMLElement) => {
+    const { height: cssHeight, width: cssWidth } = getExportSize(element)
+    const pixelRatio = getSafePixelRatio(cssWidth, cssHeight)
+
+    const imgData = await toPng(element, {
+      backgroundColor: '#f5f5f4',
+      cacheBust: true,
+      height: cssHeight,
+      pixelRatio,
+      style: {
+        height: `${cssHeight}px`,
+        transform: 'none',
+        transformOrigin: 'top left',
+        width: `${cssWidth}px`
+      },
+      width: cssWidth
+    })
+
+    // Measure the rasterized image (CSS px * pixelRatio) so the PDF page
+    // matches the actual bitmap aspect ratio instead of assuming scroll size.
+    const img = await loadImage(imgData)
+    const imgWidth = img.naturalWidth || Math.round(cssWidth * pixelRatio)
+    const imgHeight = img.naturalHeight || Math.round(cssHeight * pixelRatio)
+
+    // jsPDF works in points (1/72 inch). CSS px are 1/96 inch, so convert
+    // with 72/96. Using unit 'px' without the px_scaling hotfix inverts the
+    // scale and produces wrong-sized pages, so use 'pt' explicitly.
+    const PX_TO_PT = 72 / 96
+    const MAX_PDF_DIMENSION_PT = 14400 // jsPDF hard limit per page side
+    let pdfWidth = imgWidth * PX_TO_PT
+    let pdfHeight = imgHeight * PX_TO_PT
+    const longestSide = Math.max(pdfWidth, pdfHeight)
+    if (longestSide > MAX_PDF_DIMENSION_PT) {
+      const scale = MAX_PDF_DIMENSION_PT / longestSide
+      pdfWidth *= scale
+      pdfHeight *= scale
+    }
+
+    const pdf = new jsPDF({
+      compress: true,
+      format: [pdfWidth, pdfHeight],
+      orientation: pdfWidth > pdfHeight ? 'landscape' : 'portrait',
+      unit: 'pt'
+    })
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST')
+    pdf.save(`giapha-sodo-${new Date().toISOString().split('T')[0]}.pdf`)
+  }
 
   const handleExport = async (format: 'png' | 'pdf') => {
     try {
@@ -43,57 +156,17 @@ export default function ExportButton() {
       const element = document.getElementById('export-container')
       if (!element) throw new Error(t('exportError'))
 
-      element.classList.add('exporting')
-
-      const exportOptions = {
-        cacheBust: true,
-        backgroundColor: '#f5f5f4',
-        pixelRatio: 2,
-        width: element.scrollWidth,
-        height: element.scrollHeight,
-        style: {
-          transform: 'scale(1)',
-          transformOrigin: 'top left',
-          width: `${element.scrollWidth}px`,
-          height: `${element.scrollHeight}px`
-        }
-      }
-
       if (format === 'png') {
-        const url = await toPng(element, exportOptions)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `giapha-sodo-${new Date().toISOString().split('T')[0]}.png`
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-      } else if (format === 'pdf') {
-        const imgData = await toJpeg(element, {
-          ...exportOptions,
-          quality: 0.95
-        })
-
-        // Get the actual width and height of the element to calculate PDF dimensions
-        const width = element.scrollWidth
-        const height = element.scrollHeight
-
-        const pdf = new jsPDF({
-          orientation: width > height ? 'landscape' : 'portrait',
-          unit: 'px',
-          format: [width, height]
-        })
-        pdf.addImage(imgData, 'JPEG', 0, 0, width, height)
-        pdf.save(`giapha-sodo-${new Date().toISOString().split('T')[0]}.pdf`)
+        await handleExportPng(element)
+      } else {
+        await handleExportPdf(element)
       }
     } catch (err) {
       console.error('Export error:', err)
       setError(t('exportError'))
-      setTimeout(() => setError(null), 5000)
+      if (errorTimeoutRef.current) clearTimeout(errorTimeoutRef.current)
+      errorTimeoutRef.current = setTimeout(() => setError(null), 5000)
     } finally {
-      const element = document.getElementById('export-container')
-      if (element) {
-        element.classList.remove('exporting')
-      }
       setIsExporting(false)
     }
   }

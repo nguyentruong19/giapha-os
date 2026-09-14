@@ -1,11 +1,13 @@
 'use client'
 
-import { exportData, importData } from '@/app/actions/data'
-import { Person } from '@/types'
-import { useI18n } from '@/lib/i18n/I18nProvider'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, CheckCircle2, Download, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+
+import { exportData, importData } from '@/app/actions/data'
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person } from '@/types'
+
 import PersonSelector from './PersonSelector'
 
 export default function DataImportExport() {

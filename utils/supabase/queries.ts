@@ -1,7 +1,8 @@
-import { Profile } from '@/types'
-import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { cache } from 'react'
+
+import { Profile } from '@/types'
+import { createClient } from '@/utils/supabase/server'
 
 // Hàm này được cache lại để đảm bảo chỉ tạo 1 Supabase Client duy nhất cho mỗi request
 export const getSupabase = cache(async () => {

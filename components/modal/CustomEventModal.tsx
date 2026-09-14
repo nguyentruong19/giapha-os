@@ -1,8 +1,5 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import { CustomEventRecord } from '@/utils/eventHelpers'
-import { createClient } from '@/utils/supabase/client'
 import { AnimatePresence, motion, Variants } from 'framer-motion'
 import {
   AlertCircle,
@@ -16,6 +13,10 @@ import {
 } from 'lucide-react'
 import { Lunar } from 'lunar-javascript'
 import { useEffect, useState } from 'react'
+
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { CustomEventRecord } from '@/utils/eventHelpers'
+import { createClient } from '@/utils/supabase/client'
 
 interface CustomEventModalProps {
   isOpen: boolean

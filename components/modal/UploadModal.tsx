@@ -1,15 +1,15 @@
 'use client'
 
+import { AnimatePresence, motion } from 'framer-motion'
+import { Loader2, UploadCloud, X } from 'lucide-react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
+
 import { useI18n } from '@/lib/i18n/I18nProvider'
+import type { GalleryItem } from '@/types'
 import { createClient } from '@/utils/supabase/client'
 import { uploadGalleryImage } from '@/utils/supabase/storage'
 import { getGalleryStoragePath } from '@/utils/supabase/storage-path'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Loader2, UploadCloud, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-
-import type { GalleryItem } from '@/types'
-import Image from 'next/image'
 
 interface UploadModalProps {
   isOpen: boolean

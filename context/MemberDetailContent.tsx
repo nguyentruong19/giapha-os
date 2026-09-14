@@ -1,18 +1,5 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import DefaultAvatar from '@/components/DefaultAvatar'
-import RelationshipManager from '@/components/RelationshipManager'
-import { Person } from '@/types'
-import { getAvatarUrl } from '@/utils/avatar'
-import {
-  calculateAge,
-  formatDisplayDate,
-  getLunarDateString,
-  getSolarDateString,
-  getZodiacAnimal,
-  getZodiacSign
-} from '@/utils/dateHelpers'
 import { motion, Variants } from 'framer-motion'
 import {
   Baby,
@@ -27,7 +14,21 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useState } from 'react'
+
+import DefaultAvatar from '@/components/DefaultAvatar'
 import { FemaleIcon, MaleIcon } from '@/components/GenderIcons'
+import RelationshipManager from '@/components/RelationshipManager'
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person } from '@/types'
+import { getAvatarUrl } from '@/utils/avatar'
+import {
+  calculateAge,
+  formatDisplayDate,
+  getLunarDateString,
+  getSolarDateString,
+  getZodiacAnimal,
+  getZodiacSign
+} from '@/utils/dateHelpers'
 
 interface MemberDetailContentProps {
   person: Person

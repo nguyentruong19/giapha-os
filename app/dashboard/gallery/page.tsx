@@ -1,6 +1,6 @@
-import { getSupabase, getIsAdmin } from '@/utils/supabase/queries'
-import { getServerTranslations } from '@/lib/i18n/server'
 import GalleryClient from '@/components/GalleryClient'
+import { getServerTranslations } from '@/lib/i18n/server'
+import { getIsAdmin, getSupabase } from '@/utils/supabase/queries'
 import { getGalleryStoragePath } from '@/utils/supabase/storage-path'
 
 export async function generateMetadata() {

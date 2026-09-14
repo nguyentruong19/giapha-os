@@ -1,16 +1,17 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/I18nProvider'
-import { Person, Relationship } from '@/types'
-import { getAvatarUrl } from '@/utils/avatar'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { memo, useState } from 'react'
-import DefaultAvatar from './DefaultAvatar'
 
+import { useI18n } from '@/lib/i18n/I18nProvider'
+import { Person, Relationship } from '@/types'
+import { getAvatarUrl } from '@/utils/avatar'
 import { getAvatarBg } from '@/utils/styleHelprs'
 import { AdjacencyLists, getFilteredTreeData } from '@/utils/treeHelpers'
+
+import DefaultAvatar from './DefaultAvatar'
 
 export interface MindmapContextData {
   personsMap: Map<string, Person>

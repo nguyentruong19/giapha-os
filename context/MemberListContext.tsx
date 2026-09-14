@@ -1,8 +1,9 @@
 'use client'
 
-import { ViewMode } from '@/components/ViewToggle'
 import { useSearchParams } from 'next/navigation'
 import { createContext, useContext, useEffect, useState } from 'react'
+
+import { ViewMode } from '@/components/ViewToggle'
 
 interface MemberListViewState {
   memberModalId: string | null

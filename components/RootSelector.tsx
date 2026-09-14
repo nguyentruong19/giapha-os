@@ -1,8 +1,9 @@
 'use client'
 
+import { useMemberListView } from '@/context/MemberListContext'
 import { useI18n } from '@/lib/i18n/I18nProvider'
 import { Person } from '@/types'
-import { useMemberListView } from '@/context/MemberListContext'
+
 import PersonSelector from './PersonSelector'
 
 export default function RootSelector({

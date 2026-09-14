@@ -1,8 +1,9 @@
+import Image from 'next/image'
+import Link from 'next/link'
+
 import config from '@/app/config'
 import HeaderMenu from '@/components/HeaderMenu'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
-import Image from 'next/image'
-import Link from 'next/link'
 
 export default function DashboardHeader() {
   return (

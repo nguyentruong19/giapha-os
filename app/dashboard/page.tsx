@@ -1,7 +1,3 @@
-import { getServerTranslations } from '@/lib/i18n/server'
-import { getTodayLunar } from '@/utils/dateHelpers'
-import { computeEvents } from '@/utils/eventHelpers'
-import { getIsAdmin, getSupabase } from '@/utils/supabase/queries'
 import {
   ArrowRight,
   ArrowUpCircle,
@@ -11,13 +7,18 @@ import {
   Database,
   Flower2,
   GitMerge,
+  Image as ImageIcon,
+  Info,
   Network,
   Star,
-  Users,
-  Image as ImageIcon,
-  Info
+  Users
 } from 'lucide-react'
 import Link from 'next/link'
+
+import { getServerTranslations } from '@/lib/i18n/server'
+import { getTodayLunar } from '@/utils/dateHelpers'
+import { computeEvents } from '@/utils/eventHelpers'
+import { getIsAdmin, getSupabase } from '@/utils/supabase/queries'
 
 /* ── Event type helpers ───────────────────────────────────────────── */
 const eventTypeConfig = {

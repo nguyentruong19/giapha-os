@@ -1,9 +1,10 @@
 'use client'
 
+import { SupabaseClient, User } from '@supabase/supabase-js'
+import { createContext, ReactNode, useContext, useMemo } from 'react'
+
 import { Profile } from '@/types'
 import { createClient } from '@/utils/supabase/client'
-import { User, SupabaseClient } from '@supabase/supabase-js'
-import { createContext, useContext, ReactNode, useMemo } from 'react'
 
 interface UserState {
   user: User | null

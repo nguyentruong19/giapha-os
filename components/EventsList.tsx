@@ -1,13 +1,5 @@
 'use client'
 
-import CustomEventModal from '@/components/modal/CustomEventModal'
-import { useMemberListView } from '@/context/MemberListContext'
-import { getZodiacSign } from '@/utils/dateHelpers'
-import {
-  computeEvents,
-  CustomEventRecord,
-  FamilyEvent
-} from '@/utils/eventHelpers'
 import { motion } from 'framer-motion'
 import {
   AlignLeft,
@@ -21,9 +13,18 @@ import {
 } from 'lucide-react'
 import { Solar } from 'lunar-javascript'
 import { useRouter } from 'next/navigation'
+import { useMemo, useState } from 'react'
+
+import CustomEventModal from '@/components/modal/CustomEventModal'
+import { useMemberListView } from '@/context/MemberListContext'
 import { useI18n } from '@/lib/i18n/I18nProvider'
 import type { TranslationKey, TranslationValues } from '@/lib/i18n/messages'
-import { useMemo, useState } from 'react'
+import { getZodiacSign } from '@/utils/dateHelpers'
+import {
+  computeEvents,
+  CustomEventRecord,
+  FamilyEvent
+} from '@/utils/eventHelpers'
 
 interface EventsListProps {
   persons: {

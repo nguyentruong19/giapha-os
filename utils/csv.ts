@@ -1,6 +1,7 @@
-import { Person, Relationship } from '@/types'
 import JSZip from 'jszip'
 import Papa from 'papaparse'
+
+import { Person, Relationship } from '@/types'
 
 const UTF8_BOM = '\uFEFF'
 
