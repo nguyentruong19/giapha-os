@@ -17,7 +17,7 @@ export async function GET() {
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   // Gọi tới một bảng bất kỳ (nhớ đổi 'ten_bang' thành bảng thật trong dự án của bạn)
-  const { error } = await supabase.from('persons').select('*').limit(1);
+  const { error } = await supabase.from('app_migrations').select('*').limit(1);
 
   if (error) {
     // Ngay cả khi lỗi quyền truy cập RLS, Supabase vẫn ghi nhận đã bị ping, nên ta vẫn trả về 200
