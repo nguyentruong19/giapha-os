@@ -1,20 +1,29 @@
 'use client'
 
 import dayjs from 'dayjs'
-import { CalendarDays, Clock, Maximize2, X } from 'lucide-react'
-import Image from 'next/image'
+import { CalendarDays, Clock, Maximize2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
+import {
+  revealOnInteract,
+  slideInOnInteract
+} from '@/components/galleryCardReveal'
+import GalleryImage from '@/components/GalleryImage'
 import GalleryLightbox from '@/components/GalleryLightbox'
 import { useI18n } from '@/lib/i18n/useI18n'
-import { GalleryItem } from '@/types'
+import { GalleryItem, Person } from '@/types'
+import { deleteGalleryItem, GalleryItemNotDeletedError } from '@/utils/gallery'
+import { idAfterDelete, stepIndex } from '@/utils/galleryNav'
 import { createClient } from '@/utils/supabase/client'
-import { getGalleryStoragePath } from '@/utils/supabase/storage-path'
 
 interface GalleryGridProps {
   items: GalleryItem[]
   isAdmin?: boolean
   viewMode?: 'grid' | 'timeline'
+  /** Members, to name the tags of the open photo. */
+  persons?: Pick<Person, 'id' | 'full_name'>[]
+  /** Photo to open in the lightbox at first (from the member page). */
+  initialPhotoId?: string | null
   onEdit?: (item: GalleryItem) => void
   onDeleteSuccess?: (id: string) => void
 }
@@ -23,11 +32,15 @@ export default function GalleryGrid({
   items,
   isAdmin,
   viewMode = 'timeline',
+  persons = [],
+  initialPhotoId = null,
   onEdit,
   onDeleteSuccess
 }: GalleryGridProps) {
   const { t } = useI18n()
-  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(initialPhotoId)
+  const setSelectedItem = (item: GalleryItem | null) =>
+    setSelectedId(item ? item.id : null)
   const [isDeleting, setIsDeleting] = useState(false)
 
   // Group items by year/month for timeline mode
@@ -83,31 +96,48 @@ export default function GalleryGrid({
     return groups
   }, [items, viewMode, t])
 
+  // Lightbox order follows what is on screen
+  const orderedItems = useMemo(
+    () =>
+      viewMode === 'timeline'
+        ? timelineGroups.flatMap((group) => group.items)
+        : items,
+    [items, viewMode, timelineGroups]
+  )
+  const selectedIndex = orderedItems.findIndex((i) => i.id === selectedId)
+  const selectedItem = selectedIndex >= 0 ? orderedItems[selectedIndex] : null
+  const selectedPeople = useMemo(() => {
+    const names = new Map(persons.map((p) => [p.id, p.full_name]))
+    return (selectedItem?.person_ids ?? []).flatMap((id) => {
+      const name = names.get(id)
+      return name ? [{ id, name }] : []
+    })
+  }, [persons, selectedItem])
+  const step = (dir: -1 | 1) => {
+    const next = stepIndex(selectedIndex, orderedItems.length, dir)
+    if (next !== null) setSelectedId(orderedItems[next].id)
+  }
+
   const handleDelete = async (item: GalleryItem) => {
     if (!confirm(t('deleteImageConfirm'))) return
     setIsDeleting(true)
     try {
-      const supabase = createClient()
+      await deleteGalleryItem(createClient(), item)
 
-      // Delete from storage if possible
-      const storagePath =
-        item.storage_path || getGalleryStoragePath(item.image_url)
-      if (storagePath) {
-        await supabase.storage.from('gallery').remove([storagePath])
-      }
-
-      // Delete from db
-      const { error } = await supabase
-        .from('gallery_items')
-        .delete()
-        .eq('id', item.id)
-      if (error) throw error
-
-      setSelectedItem(null)
+      setSelectedId(
+        idAfterDelete(
+          orderedItems.map((i) => i.id),
+          orderedItems.findIndex((i) => i.id === item.id)
+        )
+      )
       if (onDeleteSuccess) onDeleteSuccess(item.id)
     } catch (err) {
       console.error('Error deleting gallery item', err)
-      alert(t('deleteImageError'))
+      alert(
+        err instanceof GalleryItemNotDeletedError
+          ? t('deleteImageNotAllowed')
+          : t('deleteImageError')
+      )
     } finally {
       setIsDeleting(false)
     }
@@ -134,21 +164,10 @@ export default function GalleryGrid({
           {items.map((item) => (
             <div
               key={item.id}
-              className='group relative cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-stone-100 shadow-sm transition duration-500 hover:shadow-xl'
-              role='button'
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  setSelectedItem(item)
-                }
-              }}
-              onClick={() => setSelectedItem(item)}>
+              className='group relative cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-stone-100 shadow-sm transition duration-500 hover:shadow-xl'>
               {/* Image */}
-              <Image
-                unoptimized
-                src={item.image_url}
-                alt={item.title}
+              <GalleryImage
+                item={item}
                 width={800}
                 height={600}
                 className='w-full object-cover transition-transform duration-700 group-hover:scale-105'
@@ -156,8 +175,10 @@ export default function GalleryGrid({
               />
 
               {/* Overlay */}
-              <div className='absolute inset-0 flex flex-col justify-end bg-linear-to-t from-stone-900/80 via-stone-900/20 to-transparent p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-                <div className='translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0'>
+              <div
+                className={`absolute inset-0 flex flex-col justify-end bg-linear-to-t from-stone-900/80 via-stone-900/20 to-transparent p-5 opacity-0 transition-opacity duration-300 ${revealOnInteract}`}>
+                <div
+                  className={`translate-y-4 transform transition-transform duration-300 ${slideInOnInteract}`}>
                   <h3 className='mb-1 line-clamp-2 text-lg leading-tight font-semibold text-white'>
                     {item.title}
                   </h3>
@@ -171,11 +192,19 @@ export default function GalleryGrid({
               </div>
 
               {/* Top Right Icon */}
-              <div className='absolute top-4 right-4 opacity-0 transition-opacity delay-100 duration-300 group-hover:opacity-100'>
+              <div
+                className={`absolute top-4 right-4 opacity-0 transition-opacity delay-100 duration-300 ${revealOnInteract}`}>
                 <div className='rounded-full bg-white/20 p-2 text-white backdrop-blur-md'>
                   <Maximize2 className='size-4' />
                 </div>
               </div>
+
+              <button
+                type='button'
+                aria-label={item.title}
+                onClick={() => setSelectedItem(item)}
+                className='absolute inset-0 z-10 cursor-pointer rounded-2xl ring-amber-500 focus-visible:ring-2'
+              />
             </div>
           ))}
         </div>
@@ -199,28 +228,18 @@ export default function GalleryGrid({
                 {group.items.map((item) => (
                   <div
                     key={item.id}
-                    onClick={() => setSelectedItem(item)}
-                    role='button'
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setSelectedItem(item)
-                      }
-                    }}
-                    className='group flex cursor-pointer flex-col justify-between rounded-2xl border border-stone-200/80 bg-white/80 p-4 backdrop-blur-xl transition-colors duration-300 hover:-translate-y-1'>
+                    className='group relative flex cursor-pointer flex-col justify-between rounded-2xl border border-stone-200/80 bg-white/80 p-4 backdrop-blur-xl transition-colors duration-300 hover:-translate-y-1'>
                     <div>
                       <div className='relative mb-4 aspect-16/10 overflow-hidden rounded-xl bg-stone-100'>
-                        <Image
-                          unoptimized
-                          src={item.image_url}
-                          alt={item.title}
+                        <GalleryImage
+                          item={item}
                           width={600}
                           height={400}
                           className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
                           loading='lazy'
                         />
-                        <div className='absolute top-2 right-2 rounded-full bg-black/40 p-1.5 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100'>
+                        <div
+                          className={`absolute top-2 right-2 rounded-full bg-black/40 p-1.5 text-white opacity-0 backdrop-blur-md transition-opacity ${revealOnInteract}`}>
                           <Maximize2 className='size-3.5' />
                         </div>
                       </div>
@@ -242,6 +261,12 @@ export default function GalleryGrid({
                         </p>
                       )}
                     </div>
+                    <button
+                      type='button'
+                      aria-label={item.title}
+                      onClick={() => setSelectedItem(item)}
+                      className='absolute inset-0 cursor-pointer rounded-2xl ring-amber-500 focus-visible:ring-2'
+                    />
                   </div>
                 ))}
               </div>
@@ -256,9 +281,14 @@ export default function GalleryGrid({
           item={selectedItem}
           isAdmin={isAdmin}
           isDeleting={isDeleting}
+          people={selectedPeople}
           onClose={() => setSelectedItem(null)}
           onEdit={onEdit}
           onDelete={handleDelete}
+          position={selectedIndex + 1}
+          total={orderedItems.length}
+          onPrev={() => step(-1)}
+          onNext={() => step(1)}
         />
       )}
     </>

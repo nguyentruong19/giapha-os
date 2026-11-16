@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   role public.user_role_enum DEFAULT 'member' NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT false,
+  locked_at TIMESTAMPTZ, -- Set while an admin has locked the account (not just waiting for approval)
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -90,7 +91,8 @@ CREATE TABLE IF NOT EXISTS public.persons (
   other_names TEXT,
   avatar_url TEXT,
   note TEXT,
-  
+  burial_place TEXT, -- Nơi an táng (public, like the dates of death)
+
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -129,6 +131,11 @@ CREATE TABLE IF NOT EXISTS public.custom_events (
   content TEXT,
   event_date DATE NOT NULL,
   location TEXT,
+  -- 'none' = once; yearly_solar / yearly_lunar = every year on the solar or
+  -- lunar day and month of event_date.
+  recurrence TEXT NOT NULL DEFAULT 'none'
+    CONSTRAINT custom_events_recurrence_check
+    CHECK (recurrence IN ('none', 'yearly_solar', 'yearly_lunar')),
   created_by UUID REFERENCES public.profiles(id) DEFAULT auth.uid(),
   
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -621,6 +628,24 @@ DROP POLICY IF EXISTS "Active users can delete gallery" ON public.gallery_items;
 DROP POLICY IF EXISTS "Admins can delete gallery" ON public.gallery_items;
 CREATE POLICY "Admins can delete gallery" ON public.gallery_items FOR DELETE TO authenticated USING (public.is_admin());
 
+-- Members tagged in a gallery photo (many to many). Same access as gallery_items.
+CREATE TABLE IF NOT EXISTS public.gallery_item_persons (
+  gallery_item_id uuid NOT NULL REFERENCES public.gallery_items(id) ON DELETE CASCADE,
+  person_id uuid NOT NULL REFERENCES public.persons(id) ON DELETE CASCADE,
+  PRIMARY KEY (gallery_item_id, person_id)
+);
+CREATE INDEX IF NOT EXISTS gallery_item_persons_person_id_idx ON public.gallery_item_persons (person_id);
+ALTER TABLE public.gallery_item_persons ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Active users can view gallery tags" ON public.gallery_item_persons;
+CREATE POLICY "Active users can view gallery tags" ON public.gallery_item_persons FOR SELECT TO authenticated USING (public.is_active_user());
+DROP POLICY IF EXISTS "Admins can insert gallery tags" ON public.gallery_item_persons;
+CREATE POLICY "Admins can insert gallery tags" ON public.gallery_item_persons FOR INSERT TO authenticated WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Admins can update gallery tags" ON public.gallery_item_persons;
+CREATE POLICY "Admins can update gallery tags" ON public.gallery_item_persons FOR UPDATE TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Admins can delete gallery tags" ON public.gallery_item_persons;
+CREATE POLICY "Admins can delete gallery tags" ON public.gallery_item_persons FOR DELETE TO authenticated USING (public.is_admin());
+
 -- ========================================================
 -- 10. STORAGE BUCKETS
 -- ========================================================
@@ -706,6 +731,9 @@ GRANT ALL ON public.custom_events TO service_role;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.gallery_items TO authenticated;
 GRANT ALL ON public.gallery_items TO service_role;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.gallery_item_persons TO authenticated;
+GRANT ALL ON public.gallery_item_persons TO service_role;
 
 -- Server-only table: the deny-by-default RLS policy keeps clients out, but
 -- the one-time approval links read and claim rows through service_role.

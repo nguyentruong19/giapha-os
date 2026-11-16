@@ -2,11 +2,12 @@
 
 import { AnimatePresence, m } from 'framer-motion'
 import { Filter } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { useMemberListView } from '@/context/useMemberListView'
 import { useI18n } from '@/lib/i18n/useI18n'
+import { disclosureButtonProps } from '@/utils/a11y'
 
 import ExportButton from './ExportButton'
 
@@ -54,6 +55,7 @@ export default function BaseToolbar({
   const { showAvatar, setShowAvatar } = useMemberListView()
   const { t } = useI18n()
   const [showFilters, setShowFilters] = useState(false)
+  const filtersPanelId = useId()
   const filtersRef = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
 
@@ -94,25 +96,28 @@ export default function BaseToolbar({
       {/* Filters */}
       <div className='relative'>
         <button
+          type='button'
+          {...disclosureButtonProps(t('show'), showFilters, filtersPanelId)}
           onClick={() => setShowFilters(!showFilters)}
           className={`flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium transition duration-300 ${
             showFilters
               ? 'border-amber-200 bg-amber-100/90 text-amber-800'
               : 'border-stone-200/60 bg-white/80 text-stone-600 backdrop-blur-md hover:bg-white hover:text-stone-900'
           }`}>
-          <Filter className='size-4' />
+          <Filter className='size-4' aria-hidden='true' />
           <span className='hidden sm:inline'>{t('show')}</span>
         </button>
 
         <AnimatePresence>
           {showFilters && (
             <m.div
+              id={filtersPanelId}
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
               className='absolute top-full right-0 z-50 mt-2 flex w-48 flex-col gap-3 rounded-3xl border border-border bg-surface/95 p-4 backdrop-blur-xl'>
-              <div className='mb-1 text-sm font-medium text-stone-400'>
+              <div className='mb-1 text-sm font-medium text-stone-500'>
                 {t('display')}
               </div>
               <label className='flex cursor-pointer items-center gap-2 text-sm text-stone-600 transition-colors select-none hover:text-stone-900'>
@@ -153,7 +158,7 @@ export default function BaseToolbar({
               )}
 
               <div className='my-1 flex h-px w-full items-center gap-2 bg-stone-100 font-medium text-stone-400'></div>
-              <div className='mb-1 text-sm font-medium text-stone-400'>
+              <div className='mb-1 text-sm font-medium text-stone-500'>
                 {t('filters')}
               </div>
               <label className='flex cursor-pointer items-center gap-2 text-sm text-stone-600 transition-colors select-none hover:text-stone-900'>

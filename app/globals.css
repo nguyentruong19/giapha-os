@@ -59,6 +59,41 @@ select {
   outline-offset: 2px;
 }
 
+/* Printing a member profile: plain white A4 page, no chrome */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000;
+  }
+
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Keep photos and cards in one piece across page breaks */
+  img,
+  li,
+  section > div {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+}
+
 /* Respect users who ask for less motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -68,6 +103,51 @@ select {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Modals are native <dialog>s opened with showModal() (hooks/useModalA11y.ts).
+   Each one is a full-viewport layer that paints its own scrim and panel. */
+@layer base {
+  dialog:modal {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    background: transparent;
+    color: inherit;
+    /* Scroll gestures in the dialog do not reach the page behind it */
+    overscroll-behavior: contain;
+  }
+  dialog::backdrop {
+    background: transparent;
+    /* A scroll container, so overscroll-behavior applies */
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Family tree: a branch the user just expanded fades and slides in.
+   Opacity and translate only, so nothing around it re-lays out. */
+.tree-branch-enter {
+  transition:
+    opacity 200ms ease-out,
+    translate 200ms ease-out;
+}
+@starting-style {
+  .tree-branch-enter {
+    opacity: 0;
+    translate: 0 -8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tree-branch-enter {
+    translate: none;
+  }
+  @starting-style {
+    .tree-branch-enter {
+      translate: none;
+    }
   }
 }
 

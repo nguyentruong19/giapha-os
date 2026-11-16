@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, m } from 'framer-motion'
-import { Mail, UserPlus } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import { ReactNode } from 'react'
 
 import { useI18n } from '@/lib/i18n/useI18n'
@@ -73,6 +73,7 @@ export function AuthAlerts({
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
+          role='alert'
           className='rounded-xl border border-red-100/50 bg-red-50 p-3 text-center text-sm font-medium text-red-700'>
           {error}
         </m.div>
@@ -83,6 +84,8 @@ export function AuthAlerts({
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
+          role='status'
+          aria-live='polite'
           className='rounded-xl border border-teal-100/50 bg-teal-50 p-3 text-center text-sm font-medium text-teal-700'>
           {successMessage}
         </m.div>
@@ -101,7 +104,7 @@ export function SsoNotice({ show, text }: { show: boolean; text: string }) {
       className='rounded-xl border border-amber-200/70 bg-amber-50 p-3 text-center text-sm font-medium text-amber-800'>
       <p>{text}</p>
       <a
-        href='https://github.com/homielab/giapha-os#đăng-nhập-bằng-google-và-facebook'
+        href={t('ssoGuideUrl')}
         target='_blank'
         rel='noopener noreferrer'
         className='mt-2 inline-block font-medium text-amber-900 underline decoration-amber-400 underline-offset-2 hover:text-amber-700'>

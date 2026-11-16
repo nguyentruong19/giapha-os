@@ -1,5 +1,8 @@
 'use client'
 
+import { useId } from 'react'
+
+import { useModalA11y } from '@/hooks/useModalA11y'
 import { useI18n } from '@/lib/i18n/useI18n'
 
 const fieldClasses =
@@ -17,11 +20,18 @@ export default function AdminCreateUserModal({
   onSubmit
 }: AdminCreateUserModalProps) {
   const { t } = useI18n()
+  const titleId = useId()
+  const dialogRef = useModalA11y(onClose)
   return (
-    <div className='fixed inset-0 z-60 flex items-center justify-center bg-stone-900/40 p-4 backdrop-blur-sm transition-opacity duration-300'>
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={titleId}
+      className='items-center justify-center bg-stone-900/40 p-4 backdrop-blur-sm transition-opacity duration-300 outline-none open:flex'>
       <div className='w-full max-w-md transform overflow-hidden rounded-2xl border border-stone-200/60 bg-white/95 backdrop-blur-xl transition-colors'>
         <div className='flex items-center justify-between border-b border-stone-100/80 bg-stone-50/50 px-6 py-5'>
-          <h3 className='font-serif text-xl font-semibold text-stone-800'>
+          <h3
+            id={titleId}
+            className='font-serif text-xl font-semibold text-stone-800'>
             {t('adminCreateTitle')}
           </h3>
           <button
@@ -53,6 +63,7 @@ export default function AdminCreateUserModal({
               </label>
               <input
                 id='admin-create-email'
+                data-autofocus
                 type='email'
                 name='email'
                 required
@@ -72,7 +83,7 @@ export default function AdminCreateUserModal({
                 type='password'
                 name='password'
                 required
-                minLength={6}
+                minLength={8}
                 className={fieldClasses}
                 placeholder={t('adminPasswordMinLength')}
               />
@@ -122,6 +133,6 @@ export default function AdminCreateUserModal({
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   )
 }

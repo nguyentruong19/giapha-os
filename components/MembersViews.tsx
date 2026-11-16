@@ -2,13 +2,19 @@
 
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import MemberList from '@/components/MemberList'
 import RootSelector from '@/components/RootSelector'
 import { useMemberListView } from '@/context/useMemberListView'
 import { useI18n } from '@/lib/i18n/useI18n'
 import { Person, Relationship } from '@/types'
+import {
+  pickDefaultRootId,
+  resolveRootId,
+  ROOT_STORAGE_KEY,
+  savedRootAction
+} from '@/utils/treeRoot'
 
 const FamilyTree = dynamic(() => import('@/components/FamilyTree'))
 const MindmapTree = dynamic(() => import('@/components/MindmapTree'))
@@ -44,42 +50,17 @@ export default function MembersViews({
 }: MembersViewsProps) {
   const { view: currentView, rootId, setRootId } = useMemberListView()
   const searchParams = useSearchParams()
-  const hasRestored = useRef(false)
 
   // Prepare map and roots for tree views
   const { personsMap, roots, defaultRootId } = useMemo(() => {
     const pMap = new Map<string, Person>()
     persons.forEach((p) => pMap.set(p.id, p))
 
-    const childIds = new Set(
-      relationships
-        .filter(
-          (r) => r.type === 'biological_child' || r.type === 'adopted_child'
-        )
-        .map((r) => r.person_b)
-    )
-
     let finalRootId = rootId
 
-    // If no rootId is provided, fallback to generation 1 or earliest birth year
+    // If no rootId is provided, open on the earliest ancestor
     if (!finalRootId || !pMap.has(finalRootId)) {
-      const rootsFallback = persons.filter((p) => !childIds.has(p.id))
-      if (rootsFallback.length > 0) {
-        const gen1 = rootsFallback.filter((p) => p.generation === 1)
-        const sortByBirthYear = (a: Person, b: Person) => {
-          const ya = a.birth_year ?? Infinity
-          const yb = b.birth_year ?? Infinity
-          return ya - yb
-        }
-
-        if (gen1.length > 0) {
-          finalRootId = gen1.sort(sortByBirthYear)[0].id
-        } else {
-          finalRootId = rootsFallback.sort(sortByBirthYear)[0].id
-        }
-      } else if (persons.length > 0) {
-        finalRootId = persons[0].id // ultimate fallback
-      }
+      finalRootId = pickDefaultRootId(persons, relationships) ?? null
     }
 
     let calculatedRoots: Person[] = []
@@ -94,44 +75,24 @@ export default function MembersViews({
     }
   }, [persons, relationships, rootId])
 
-  const activeRootId = rootId || defaultRootId
+  const activeRootId = resolveRootId(rootId, personsMap, defaultRootId)
 
-  // Khôi phục lựa chọn từ localStorage
+  // Restore the root picked earlier whenever the URL names none: on the first
+  // render and after a client navigation from a `?rootId=` link.
   useEffect(() => {
-    if (hasRestored.current) return
-
-    const urlRootId = searchParams.get('rootId')
-
-    if (!urlRootId) {
-      try {
-        const savedRootId = localStorage.getItem('members_rootId')
-
-        if (!urlRootId && savedRootId && savedRootId !== rootId) {
-          setRootId(savedRootId)
-        }
-      } catch (e) {
-        console.warn('Failed to read from localStorage:', e)
-      }
+    try {
+      const action = savedRootAction(
+        searchParams.get('rootId'),
+        rootId,
+        localStorage.getItem(ROOT_STORAGE_KEY),
+        (id) => personsMap.has(id)
+      )
+      if (action && 'restore' in action) setRootId(action.restore)
+      else if (action) localStorage.removeItem(ROOT_STORAGE_KEY)
+    } catch (e) {
+      console.warn('Failed to read from localStorage:', e)
     }
-
-    hasRestored.current = true
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Lưu lựa chọn vào localStorage
-  useEffect(() => {
-    if (!hasRestored.current) return
-
-    const timeout = setTimeout(() => {
-      try {
-        if (activeRootId) localStorage.setItem('members_rootId', activeRootId)
-      } catch (e) {
-        console.warn('Failed to write to localStorage:', e)
-      }
-    }, 100)
-
-    return () => clearTimeout(timeout)
-  }, [currentView, activeRootId])
+  }, [rootId, personsMap, searchParams, setRootId])
 
   return (
     <>
